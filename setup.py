@@ -12,9 +12,9 @@ setuptools.setup(
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python",
+        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Physics",
+        "Intended Audience :: Science/Research",
     ],
 )
