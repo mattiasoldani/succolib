@@ -1,2 +1,1 @@
-from .io_ascii import *
-from .io_root import *
+from io import all
