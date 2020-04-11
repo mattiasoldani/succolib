@@ -1,1 +1,1 @@
-from io import all
+from .io import *
