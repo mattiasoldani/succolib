@@ -9,8 +9,8 @@ dfFromRoot_reshape reshapes the variable names in a Pandas dataframe, solving th
     > removing the square brackets in the variable names
     > remapping all the variable names according to an old-to-new name map
     
-dfOut = dfFromRoot_reshape(...) is the output (reshaped) dataframe
-dfIn is the input (raw) dataframe
+df1 = dfFromRoot_reshape(...) is the output (reshaped) dataframe
+df0 is the input (raw) dataframe
 treeMap is a dictionary containing the old-to-new name map (new/old names in keys/values)
 
 default values for the optional variables:
@@ -21,21 +21,22 @@ note: treeMap can be not given at all -- in this case, all the variable names ar
 dependencies: none
 """
 
-def dfFromRoot_reshape(dfIn, treeMap):
-    dfOut = dfIn
+def dfFromRoot_reshape(df0, treeMap):
+    df1 = df0
+
     # remove square brackets from the variable names
-    dfOut = dfOut.rename(columns = dict(zip(
-        [s for s in dfOut.columns if ("[" in s) & ("]" in s)], 
-        [s.replace("[", "").replace("]", "") for s in dfOut.columns if ("[" in s) & ("]" in s)]
+    df1 = df1.rename(columns = dict(zip(
+        [s for s in df1.columns if ("[" in s) & ("]" in s)], 
+        [s.replace("[", "").replace("]", "") for s in df1.columns if ("[" in s) & ("]" in s)]
     )))
 
     # rename variables according to treeMap
-    dfOut = dfOut.rename(columns = dict(zip(
-        [treeMap[s] for s in treeMap if treeMap[s] in dfOut.columns], 
-        [s for s in treeMap if treeMap[s] in dfOut.columns]
+    df1 = df1.rename(columns = dict(zip(
+        [treeMap[s] for s in treeMap if treeMap[s] in df1.columns], 
+        [s for s in treeMap if treeMap[s] in df1.columns]
     )))
 
-    return dfOut
+    return df1
 
 
 ########################################################################################################################
