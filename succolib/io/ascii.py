@@ -1,8 +1,8 @@
-from numpy import loadtxt
-from glob import glob
-from pandas import DataFrame
-from progressbar import ProgressBar
-from os import stat
+import numpy as np
+import glob
+import pandas as pd
+import progressbar
+import os
 
 
 ########################################################################################################################
@@ -31,17 +31,17 @@ empty ASCII files are automatically skipped
 
 if descFrac = 0, descFrac is set equal to 10^(-12)
 
-dependencies: glob.glob, pandas.DataFrame, progressbar.ProgressBar, os.stat, numpy.loadtxt
+dependencies: glob.glob, pd.DataFrame, progressbar.ProgressBar, os.stat, np.loadtxt
 """
 
 def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, bVerbose = False):
-    names = sorted(glob(nameFormat.replace("YYYYYY", "*")))  # list of all the filenames of the current run
-    df = DataFrame()
+    names = sorted(glob.glob(nameFormat.replace("YYYYYY", "*")))  # list of all the filenames of the current run
+    df = pd.DataFrame()
     descFrac = 10e-12 if descFrac == 0 else descFrac
-    for iName in ProgressBar()(names) if bVerbose else names:
-        if stat(iName).st_size > 0:
+    for iName in progressbar.ProgressBar()(names) if bVerbose else names:
+        if os.stat(iName).st_size > 0:
             if nLinesEv == 1:
-                dataTableTemp = loadtxt(iName, unpack=False, ndmin=2)
+                dataTableTemp = np.loadtxt(iName, unpack=False, ndmin=2)
             else:
                 fileToString0 = open(iName,'r').read()
                 fileToStringSplitted0 = fileToString0.splitlines()
@@ -52,8 +52,8 @@ def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, bVerbose = False
                     else:
                         fileToString += iLine + " "
                 fileToStringSplitted = fileToString.splitlines()
-                dataTableTemp = loadtxt(fileToStringSplitted)
-            dfTemp = DataFrame(dataTableTemp, columns=asciiMap)
+                dataTableTemp = np.loadtxt(fileToStringSplitted)
+            dfTemp = pd.DataFrame(dataTableTemp, columns=asciiMap)
             df = df.append(dfTemp[dfTemp.index % int(1 / descFrac) == 0], ignore_index=True, sort=False)
     return df
 
@@ -82,11 +82,11 @@ note: descFrac can be not given at all -- in this case, 1 is taken for all the f
 
 relies on succolib.asciiToDf for each of the filename higher-priority changing part values
 
-dependencies: pandas.DataFrame, succolib.asciiToDf
+dependencies: pd.DataFrame, succolib.asciiToDf
 """
 
 def asciiToDfMulti(nameFormat, fileIndex, asciiMap, fileIndexName = "iIndex", nLinesEv = 1, descFrac = {}, bVerbose = False):
-    df = DataFrame()
+    df = pd.DataFrame()
     for i, iIndex in enumerate(sorted(fileIndex)):
         if not (iIndex in descFrac.keys()):
             descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1

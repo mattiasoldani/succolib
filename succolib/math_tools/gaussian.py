@@ -1,5 +1,4 @@
-from numpy import exp
-
+import numpy as np
 
 ########################################################################################################################
 # fGaus ################################################################################################################
@@ -14,9 +13,9 @@ sigma is the distribution sigma
 
 function format: A * exp[ - ( (x-u)^2 / (2*(sigma)^2) ) ]
 
-dependencies: numpy.exp
+dependencies: np.exp
 """
 
 def fGaus(x, A, u, sigma):
     expo = -(x-u)**2/(2*sigma**2)
-    return A*exp(expo)
+    return A*np.exp(expo)

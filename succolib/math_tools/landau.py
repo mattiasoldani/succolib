@@ -1,4 +1,4 @@
-from numpy import exp
+import numpy as np
 
 
 ########################################################################################################################
@@ -14,13 +14,13 @@ width is the distribution width
 
 function format: A * exp[ - (1/2) * ( (x-mpv)/width + exp(-(x-mpv)/width) ) ]
 
-dependencies: numpy.exp
+dependencies: np.exp
 """
 
 def fLandau(x, A, mpv, width):
     expo0 = (x-mpv)/width
-    expo1 = exp(-expo0)
-    return A*exp(-0.5*(expo0+expo1))
+    expo1 = np.exp(-expo0)
+    return A*np.exp(-0.5*(expo0+expo1))
 
 
 ########################################################################################################################
@@ -36,10 +36,10 @@ width is the distribution width
 
 function format: A * exp[ - (1/2) * ( (mpv-x)/width + exp(-(mpv-x)/width) ) ]
 
-dependencies: numpy.exp
+dependencies: np.exp
 """
 
 def fLandauMirror(x, A, mpv, width):
     expo0 = (mpv-x)/width
-    expo1 = exp(-expo0)
-    return A*exp(-0.5*(expo0+expo1))
+    expo1 = np.exp(-expo0)
+    return A*np.exp(-0.5*(expo0+expo1))

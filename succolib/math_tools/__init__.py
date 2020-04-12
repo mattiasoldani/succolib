@@ -1,2 +1,2 @@
-from .gaussian import *
-from .landau import *
+from .gaussian import fGaus
+from .landau import fLandau, fLandauMirror
