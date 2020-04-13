@@ -1,5 +1,6 @@
 import pandas as pd
 import uproot
+import time
 
 
 ########################################################################################################################
@@ -44,7 +45,9 @@ def dfFromRootReshape(df0, treeMap):
 """
 rootToDfMulti opens all the ROOT files that have the same name format apart from one part & creates a single Pandas dataframe with minor data reshaping (see dfFromRootReshape)
 
-df = rootToDfMulti(...) is the output dataframe
+df, dt = rootToDfMulti(...) returns 2 objects:
+    df is the output dataframe
+    dt is the elapsed time
 nameFormat is the name format common to all the ROOT files to be opened (with a XXXXXX in place of the changing part)
 fileIndex is the list of string values the filename changing part has to assume
 treeName is the name of the tree inside the ROOT files, common to all the files
@@ -65,10 +68,11 @@ note: treeMap can be not given at all -- in this case, all the variable names ar
 
 if descFrac = 0 for , descFrac is set equal to 10^(-12)
 
-dependencies: pd.DataFrame, uproot.open, succolib.dfFromRootReshape
+dependencies: time.time, pd.DataFrame, uproot.open, succolib.dfFromRootReshape
 """
 
 def rootToDfMulti(nameFormat, fileIndex, treeName, fileIndexName = "iIndex", descFrac = {}, treeMap = {}, bVerbose = False):
+    t0 = time.time()  # chronometer start
     df = pd.DataFrame()
     for i, iIndex in enumerate(sorted(fileIndex)):
         if not (iIndex in descFrac.keys()):
@@ -84,4 +88,6 @@ def rootToDfMulti(nameFormat, fileIndex, treeName, fileIndexName = "iIndex", des
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
         df = df.append(dfTemp, ignore_index=True, sort=False)
-    return df
+    t1 = time.time()  # chronometer stop
+    dt = t1 - t0
+    return df, dt
