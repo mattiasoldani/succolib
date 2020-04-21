@@ -1,4 +1,7 @@
+# editor-related
 .idea/
 __pycache__/
 
+# my files
 test.py
+draftRef.txt

@@ -2,20 +2,7 @@ import numpy as np
 
 
 ########################################################################################################################
-# fLandau ##############################################################################################################
-"""
-fLandau is the Landau's distribution
-
-fLandau(x, A, mpv, width)
-x is the distribution variable
-A is the distribution amplitude
-mpv is the distribution most probable value
-width is the distribution width
-
-function format: A * exp[ - (1/2) * ( (x-mpv)/width + exp(-(x-mpv)/width) ) ]
-
-dependencies: np.exp
-"""
+# fLandau
 
 def fLandau(x, A, mpv, width):
     expo0 = (x-mpv)/width
@@ -24,20 +11,7 @@ def fLandau(x, A, mpv, width):
 
 
 ########################################################################################################################
-# fLandauMirror ########################################################################################################
-"""
-fLandauMirror is the mirrored Landau's distribution, i.e. with inverted abscissas
-
-fLandauMirror(x, A, mpv, width)
-x is the distribution variable
-A is the distribution amplitude
-mpv is the distribution most probable value
-width is the distribution width
-
-function format: A * exp[ - (1/2) * ( (mpv-x)/width + exp(-(mpv-x)/width) ) ]
-
-dependencies: np.exp
-"""
+# fLandauMirror
 
 def fLandauMirror(x, A, mpv, width):
     expo0 = (mpv-x)/width

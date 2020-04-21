@@ -7,35 +7,7 @@ import time
 
 
 ########################################################################################################################
-# asciiToDf ############################################################################################################
-"""
-asciiToDf opens all the ASCII files that have the same name format apart from one part & creates a single Pandas dataframe
-
-df, dt = asciiToDf(...) returns 2 objects:
-    df is the output dataframe
-    dt is the elapsed time
-nameFormat is the name format common to all the ASCII files to be opened (with a YYYYYY in place of the changing part)
-asciiMap is the list of the variables contained in each column of the ASCII files
-nLinesEv is the number of lines per single event
-descFrac is the descaling fraction, i.e. fraction of (uniformly distributed along the run) events to be processed
-bVerbose is a boolean for the verbose (True) or quiet (False) mode
-
-default values for the optional variables:
-    nLinesEv = 1
-    descFrac = 1
-    bVerbose = False
-
-all the ASCII files must have the same event format
-formats in which there are multiple lines per event are supported -- nLinesEv>1:
-in this case asciiMap must follow the columns-then-rows order
-e.g. (0,0), ..., (0, NCol), (1,0), ..., (1, NCol), ..., (NRow, NCol)
-
-empty ASCII files are automatically skipped
-
-if descFrac = 0, descFrac is set equal to 10^(-12)
-
-dependencies: time.time, glob.glob, pd.DataFrame, progressbar.ProgressBar, os.stat, np.loadtxt
-"""
+# asciiToDf
 
 def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, bVerbose = False):
     t0 = time.time()  # chronometer start
@@ -65,33 +37,7 @@ def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, bVerbose = False
 
 
 ########################################################################################################################
-# asciiToDfMulti #######################################################################################################
-"""
-asciiToDfMulti opens all the ASCII files that have the same name format apart from two hierarchically different parts & creates a single Pandas dataframe
-
-df, dt = asciiToDfMulti(...) returns 2 objects:
-    df is the output dataframe
-    dt is the elapsed time
-nameFormat is the name format common to all the ASCII files to be opened (with a XXXXXX/YYYYYY in place of the higher-/lower-priority changing part)
-fileIndex is the list of string values the filename higher-priority changing part has to assume (all the lower-priority part values available are always taken)
-asciiMap is the list of the variables contained in each column of the ASCII files
-fileIndexName is the name of the newly created (if not already existing) dataframe column that contains the higher-priority changing part values -- if "", no new column is created
-nLinesEv is the number of lines per single event
-descFrac is the dictionary of descaling fractions, i.e. fraction of (uniformly distributed along the run) events to be processed -- one per fileIndex entry
-bVerbose is a boolean for the verbose (True) or quiet (False) mode
-
-default values for the optional variables:
-    fileIndexName = "iIndex"
-    nLinesEv = 1
-    descFrac = {}
-    bVerbose = False
-    
-note: descFrac can be not given at all -- in this case, 1 is taken for all the fileIndex values
-
-relies on succolib.asciiToDf for each of the filename higher-priority changing part values
-
-dependencies: time.time, pd.DataFrame, succolib.asciiToDf
-"""
+# asciiToDfMulti
 
 def asciiToDfMulti(nameFormat, fileIndex, asciiMap, fileIndexName = "iIndex", nLinesEv = 1, descFrac = {}, bVerbose = False):
     t0 = time.time()  # chronometer start
