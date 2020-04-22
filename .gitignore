@@ -1,6 +1,7 @@
 # editor-related
 .idea/
 __pycache__/
+.ipynb_checkpoints/
 
 # my files
 test.py

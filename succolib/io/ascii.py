@@ -5,15 +5,16 @@ import progressbar
 import os
 import time
 
+from .misc import dfMirror
 
 ########################################################################################################################
 # asciiToDf
 
-def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, bVerbose = False):
+def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, mirrorMap = [], bVerbose = False):
     t0 = time.time()  # chronometer start
     names = sorted(glob.glob(nameFormat.replace("YYYYYY", "*")))  # list of all the filenames of the current run
     df = pd.DataFrame()
-    descFrac = 10e-12 if descFrac == 0 else descFrac
+    descFrac = 1e-12 if descFrac <= 0 else (descFrac if descFrac <= 1 else 1)
     for iName in progressbar.ProgressBar()(names) if bVerbose else names:
         if os.stat(iName).st_size > 0:
             if nLinesEv == 1:
@@ -31,6 +32,7 @@ def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, bVerbose = False
                 dataTableTemp = np.loadtxt(fileToStringSplitted)
             dfTemp = pd.DataFrame(dataTableTemp, columns=asciiMap)
             df = df.append(dfTemp[dfTemp.index % int(1 / descFrac) == 0], ignore_index=True, sort=False)
+            df = dfMirror(df, mirrorMap)
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
     return df, dt
@@ -39,20 +41,31 @@ def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, bVerbose = False
 ########################################################################################################################
 # asciiToDfMulti
 
-def asciiToDfMulti(nameFormat, fileIndex, asciiMap, fileIndexName = "iIndex", nLinesEv = 1, descFrac = {}, bVerbose = False):
+def asciiToDfMulti(nameFormat, fileIndex, asciiMap, fileIndexName = "iIndex", nLinesEv = 1, descFrac = {}, mirrorMap = {}, bVerbose = False):
     t0 = time.time()  # chronometer start
     df = pd.DataFrame()
     for i, iIndex in enumerate(sorted(fileIndex)):
         if not (iIndex in descFrac.keys()):
             descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1
         if bVerbose:
-            print("(%d/%d) %s -- descaling fraction: %f" % (i+1, len(fileIndex), iIndex, descFrac[iIndex]))
-        dfTemp, _ = asciiToDf(nameFormat.replace("XXXXXX", iIndex), asciiMap, nLinesEv, descFrac[iIndex], bVerbose)
-        if len(fileIndexName)>0:  # fileIndexName column creation (if requested & not already existing)
+            print("(%d/%d) %s -- descaling fraction: %14.12f" % (i+1, len(fileIndex), iIndex, descFrac[iIndex]))
+        dfTemp, _ = asciiToDf(nameFormat.replace("XXXXXX", iIndex), asciiMap, nLinesEv, descFrac[iIndex], bVerbose=bVerbose)
+
+        # data mirroring according to mirrorMap, which differs from iLayer to iLayer
+        if iIndex in mirrorMap:
+            print("\tmirroring (from mirror map given) "+str(mirrorMap[iIndex]))
+            dfTemp = dfMirror(dfTemp, mirrorMap[iIndex])
+        else:
+            print("\tno variables to mirror")
+
+        # fileIndexName column creation (if requested & not already existing)
+        if len(fileIndexName)>0:
             if not (fileIndexName in dfTemp.columns):
                 dfTemp[fileIndexName] = str(iIndex)
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
+            print("\tvariable %s also added to df" % fileIndexName)
+
         df = df.append(dfTemp, ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
