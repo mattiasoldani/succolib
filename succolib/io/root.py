@@ -55,7 +55,7 @@ def rootToDfMulti(nameFormat, fileIndex, treeName, fileIndexName = "iIndex", des
                 dfTemp[fileIndexName] = str(iIndex)
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
-        print("\tvariable %s also added to df" % fileIndexName)
+        print("\t%s also added to df" % fileIndexName)
 
         df = df.append(dfTemp[dfTemp.index % int(1 / min(1, abs(descFrac[iIndex]))) == 0], ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
