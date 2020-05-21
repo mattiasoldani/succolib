@@ -1,19 +1,28 @@
 import numpy as np
 
-
 ########################################################################################################################
-# fLandau
 
-def fLandau(x, A, mpv, width):
+def fLandau(
+        x,
+        A,
+        mpv,
+        width
+):
+
     expo0 = (x-mpv)/width
     expo1 = np.exp(-expo0)
     return A*np.exp(-0.5*(expo0+expo1))
 
 
 ########################################################################################################################
-# fLandauMirror
 
-def fLandauMirror(x, A, mpv, width):
+def fLandauMirror(
+        x,
+        A,
+        mpv,
+        width
+):
+
     expo0 = (mpv-x)/width
     expo1 = np.exp(-expo0)
     return A*np.exp(-0.5*(expo0+expo1))

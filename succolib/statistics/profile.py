@@ -1,10 +1,12 @@
 import numpy as np
 
-
 ########################################################################################################################
-# hist2dToProfile
 
-def hist2dToProfile(hist2DObj, errType = ""):
+def hist2dToProfile(
+        hist2DObj,
+        errType = ""
+):
+
     xVal = []
     yVal = []
     yErr = []

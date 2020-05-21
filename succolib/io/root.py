@@ -5,9 +5,12 @@ import time
 from .misc import dfMirror
 
 ########################################################################################################################
-# dfFromRootReshape
 
-def dfFromRootReshape(df, treeMap):
+def dfFromRootReshape(
+        df,
+        treeMap
+):
+
     # remove square brackets from the variable names
     df = df.rename(columns = dict(zip(
         [s for s in df.columns if ("[" in s) & ("]" in s)],
@@ -21,11 +24,19 @@ def dfFromRootReshape(df, treeMap):
     )))
     return df
 
-
 ########################################################################################################################
-# rootToDfMulti
 
-def rootToDfMulti(nameFormat, fileIndex, treeName, fileIndexName = "iIndex", descFrac = {}, treeMap = {}, mirrorMap = {}, bVerbose = False):
+def rootToDfMulti(
+        nameFormat,
+        fileIndex,
+        treeName,
+        fileIndexName = "iIndex",
+        descFrac = {},
+        treeMap = {},
+        mirrorMap = {},
+        bVerbose = False
+):
+
     t0 = time.time()  # chronometer start
     df = pd.DataFrame()
     for i, iIndex in enumerate(sorted(fileIndex)):

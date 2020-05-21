@@ -8,9 +8,16 @@ import time
 from .misc import dfMirror
 
 ########################################################################################################################
-# asciiToDf
 
-def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, mirrorMap = [], bVerbose = False):
+def asciiToDf(
+        nameFormat,
+        asciiMap,
+        nLinesEv = 1,
+        descFrac = 1,
+        mirrorMap = [],
+        bVerbose = False
+):
+
     t0 = time.time()  # chronometer start
     names = sorted(glob.glob(nameFormat.replace("YYYYYY", "*")))  # list of all the filenames of the current run
     df = pd.DataFrame()
@@ -37,11 +44,19 @@ def asciiToDf(nameFormat, asciiMap, nLinesEv = 1, descFrac = 1, mirrorMap = [], 
     dt = t1 - t0
     return df, dt
 
-
 ########################################################################################################################
-# asciiToDfMulti
 
-def asciiToDfMulti(nameFormat, fileIndex, asciiMap, fileIndexName = "iIndex", nLinesEv = 1, descFrac = {}, mirrorMap = {}, bVerbose = False):
+def asciiToDfMulti(
+        nameFormat,
+        fileIndex,
+        asciiMap,
+        fileIndexName = "iIndex",
+        nLinesEv = 1,
+        descFrac = {},
+        mirrorMap = {},
+        bVerbose = False
+):
+
     t0 = time.time()  # chronometer start
     df = pd.DataFrame()
     for i, iIndex in enumerate(sorted(fileIndex)):

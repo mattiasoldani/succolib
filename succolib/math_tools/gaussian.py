@@ -1,8 +1,13 @@
 import numpy as np
 
 ########################################################################################################################
-# fGaus
 
-def fGaus(x, A, u, sigma):
+def fGaus(
+        x,
+        A,
+        u,
+        sigma
+):
+
     expo = -(x-u)**2/(2*sigma**2)
     return A*np.exp(expo)
