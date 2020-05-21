@@ -13,7 +13,6 @@ setup(
     license="MIT",
     classifiers=[
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering :: Physics",
         "Intended Audience :: Science/Research",
