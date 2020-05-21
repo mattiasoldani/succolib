@@ -12,7 +12,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "numpy",
-    ]
+    ],
     license="MIT",
     classifiers=[
         "Programming Language :: Python",
