@@ -1,9 +1,9 @@
 import numpy as np
 import glob
 import pandas as pd
-import progressbar
 import os
 import time
+from tqdm.auto import tqdm
 
 from .misc import dfMirror
 
@@ -22,7 +22,7 @@ def asciiToDf(
     names = sorted(glob.glob(nameFormat.replace("YYYYYY", "*")))  # list of all the filenames of the current run
     df = pd.DataFrame()
     descFrac = 1e-12 if descFrac <= 0 else (descFrac if descFrac <= 1 else 1)
-    for iName in progressbar.ProgressBar()(names) if bVerbose else names:
+    for iName in tqdm((names)) if bVerbose else names:
         if os.stat(iName).st_size > 0:
             if nLinesEv == 1:
                 dataTableTemp = np.loadtxt(iName, unpack=False, ndmin=2)
