@@ -50,15 +50,18 @@ def rootToDfMulti(
 
         # data reshaping: removing the square brackets in the names & remapping all the names according to treeMap
         if len(treeMap)>0:
-            print("\tremapping some ROOT tree variables (from tree map given)")
+            if bVerbose:
+                print("\tremapping some ROOT tree variables (from tree map given)")
             dfTemp = dfFromRootReshape(dfTemp, treeMap)
 
         # data mirroring according to mirrorMap, which differs from iLayer to iLayer
         if iIndex in mirrorMap:
-            print("\tmirroring (from mirror map given) "+str(mirrorMap[iIndex]))
+            if bVerbose:
+                print("\tmirroring (from mirror map given) "+str(mirrorMap[iIndex]))
             dfTemp = dfMirror(dfTemp, mirrorMap[iIndex])
         else:
-            print("\tno variables to mirror")
+            if bVerbose:
+                print("\tno variables to mirror")
 
         # fileIndexName column creation (if requested & not already existing -- after the data reshaping)
         if len(fileIndexName)>0:
@@ -66,7 +69,8 @@ def rootToDfMulti(
                 dfTemp[fileIndexName] = str(iIndex)
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
-        print("\t%s also added to df" % fileIndexName)
+        if bVerbose:
+            print("\t%s also added to df" % fileIndexName)
 
         df = df.append(dfTemp[dfTemp.index % int(1 / min(1, abs(descFrac[iIndex]))) == 0], ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
