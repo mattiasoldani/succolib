@@ -69,11 +69,11 @@ def asciiToDfMulti(
         # data mirroring according to mirrorMap, which differs from iLayer to iLayer
         if iIndex in mirrorMap:
             if bVerbose:
-                print("\tmirroring (from mirror map given) "+str(mirrorMap[iIndex]))
+                print("mirroring (from mirror map given) "+str(mirrorMap[iIndex]))
             dfTemp = dfMirror(dfTemp, mirrorMap[iIndex])
         else:
             if bVerbose:
-                print("\tno variables to mirror")
+                print("no variables to mirror")
 
         # fileIndexName column creation (if requested & not already existing)
         if len(fileIndexName)>0:
@@ -82,7 +82,7 @@ def asciiToDfMulti(
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
             if bVerbose:
-                print("\t%s also added to df" % fileIndexName)
+                print("%s also added to df" % fileIndexName)
 
         df = df.append(dfTemp, ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
