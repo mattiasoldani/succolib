@@ -11,6 +11,7 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     packages=find_packages(),
+    python_requires=">3.0"
     install_requires=[
         "python>=3.0",
         "numpy",
