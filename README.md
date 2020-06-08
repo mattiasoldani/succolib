@@ -10,9 +10,3 @@ succolib provides several tools, mainly for
 * **statistical analysis**, e.g. common distributions in High-Energy Physics, given in a highly accessible form to facilitate data visualisation and fitting.
 
 Install succolib, along with all its dependencies, via `pip install python`.
-
-### data input
-
-### data analysis
-
-### statistical tools
