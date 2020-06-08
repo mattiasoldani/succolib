@@ -10,3 +10,7 @@ succolib provides several tools, mainly for
 * **statistical analysis**, e.g. common distributions in High-Energy Physics, given in a highly accessible form to facilitate data visualisation and fitting.
 
 Install succolib, along with all its dependencies, via `pip install python`.
+
+Dependencies:
+[![](https://img.shields.io/badge/numpy-blue.svg)](https://numpy.org/) [![](https://img.shields.io/badge/pandas-blue.svg)](https://pandas.pydata.org/) [![](https://img.shields.io/badge/tqdm-blue.svg)](https://github.com/tqdm/tqdm) [![](https://img.shields.io/badge/uproot-blue.svg)](https://github.com/scikit-hep/uproot)
+Note: ROOT itself is not required.
