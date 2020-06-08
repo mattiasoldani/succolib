@@ -9,10 +9,7 @@ succolib provides several tools, mainly for
 * **data conditioning**, i.e. typical transformations applied to and calculations performed on the raw data &mdash; e.g. particle tracking data reconstruction;
 * **statistical analysis**, e.g. common distributions in High-Energy Physics, given in a highly accessible form to facilitate data visualisation and fitting.
 
-Install succolib, along with all its dependencies, via:
-```python
-pip install succolib
-```
+Install succolib, along with all its dependencies, via `pip install python`.
 
 ### data input
 
