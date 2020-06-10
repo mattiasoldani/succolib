@@ -33,7 +33,7 @@ def rootToDfMulti(
         fileIndexName = "iIndex",
         descFrac = {},
         treeMap = {},
-        mirrorMap = {},
+        mirrorMap = [],
         bVerbose = False
 ):
 
