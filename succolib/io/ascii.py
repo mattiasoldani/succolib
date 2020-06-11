@@ -14,7 +14,7 @@ def asciiToDf(
         asciiMap,
         nLinesEv = 1,
         descFrac = 1,
-        mirrorMap = [],
+        mirrorMap = [],  # this is a list here, but a dictionary in asciiToDfMulti() (i.e. the "main" function)
         bVerbose = False
 ):
 
