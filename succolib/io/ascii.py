@@ -9,6 +9,7 @@ from .misc import dfMirror
 
 ########################################################################################################################
 
+# it's best to use asciiToDfMulti() (which exploits this asciiToDf()) also for single file opening
 def asciiToDf(
         nameFormat,
         asciiMap,

@@ -4,27 +4,7 @@ import time
 import glob
 from tqdm.auto import tqdm
 
-from .misc import dfMirror
-
-########################################################################################################################
-
-def dfFromRootReshape(
-        df,
-        treeMap
-):
-
-    # remove square brackets from the variable names
-    df = df.rename(columns = dict(zip(
-        [s for s in df.columns if ("[" in s) & ("]" in s)],
-        [s.replace("[", "").replace("]", "") for s in df.columns if ("[" in s) & ("]" in s)]
-    )))
-
-    # rename variables according to treeMap
-    df = df.rename(columns = dict(zip(
-        [treeMap[s] for s in treeMap if treeMap[s] in df.columns],
-        [s for s in treeMap if treeMap[s] in df.columns]
-    )))
-    return df
+from .misc import dfReshape, dfMirror
 
 ########################################################################################################################
 
@@ -60,7 +40,7 @@ def rootToDfMulti(
             if bVerbose:
                 print("remapping some ROOT tree variables (from tree map given)")
             if dfTemp.shape[0] > 0:
-                dfTemp = dfFromRootReshape(dfTemp, treeMap)
+                dfTemp = dfReshape(dfTemp, treeMap, True)
 
         # data mirroring according to mirrorMap, which differs from iLayer to iLayer
         if iIndex in mirrorMap:

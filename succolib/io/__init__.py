@@ -1,3 +1,3 @@
-from .misc import dfMirror
+from .misc import dfMirror, dfReshape
 from .ascii import asciiToDf, asciiToDfMulti
-from .root import dfFromRootReshape, rootToDfMulti
+from .root import rootToDfMulti
