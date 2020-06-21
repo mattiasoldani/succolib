@@ -99,6 +99,6 @@ Tools are provided to reconstruct the particle trajectories starting from the si
 
 In particular, let *z* be the hypothetical beam direction and *x* be the transverse coordinate measured by the tracking modules series (as depicted in the figure above); given the linear trajectory determined by the pairs *(x0, z0)* and *(x1, z1)*, *x0* and *x1* corresponding to the (single) particle hit positions measured by an upstream (at *z0*) and a downstream (at *z1*) tracking module respectively:
 * `zAngle(x1, z1, x0, z0)` returns the trajectory angle with respect to the beam direction in the *xz* plane, in radians.
-* `zProj(x1, z1, x0, z0, z2)` returns the transverse position `x2` of the trajectory projected to the transverse position `z2`.
+* `zProj(x1, z1, x0, z0, z2)` returns the transverse position `x2` of the trajectory projected to the longitudinal position `z2`.
 
 All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/stable/reference/arrays.ndarray.html)/[pandas.Series](https://pandas.pydata.org/pandas-docs/stable/reference/series.html) objects. The units of measurements have to be consistent to each other.
