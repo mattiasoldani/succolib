@@ -95,7 +95,7 @@ in the `asciiToDfMulti()` arguments will open the whole file list of the example
 
 Tools are provided to reconstruct the particle trajectories starting from the single tracking detectors data. Focus has been put on 2D tracking with 1D-sensitive detectors (e.g. silicon microstrip layers, drift tube chambers, plastic hodoscopes, etcetera) in fixed-target experiments. 
 
-<img src="./readme_pics/succolib_tracking_scheme.png" alt="trackingSetup" width="628" height="300">
+<img src="./readme_pics/succolib_tracking_schemse.png" alt="trackingSetup" width="628" height="300">
 
 In particular, let *z* be the hypothetical beam direction and *x* be the transverse coordinate measured by the tracking modules series (as depicted in the figure above); given the linear trajectory determined by the pairs *(x0, z0)* and *(x1, z1)*, *x0* and *x1* corresponding to the (single) particle hit positions measured by an upstream (at *z0*) and a downstream (at *z1*) tracking module respectively:
 * `zAngle(x1, z1, x0, z0)` returns the trajectory angle with respect to the beam direction in the *xz* plane, in radians.
