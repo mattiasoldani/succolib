@@ -2,10 +2,10 @@
 
 def dfMirror(
         df,
-        mirrorMap
+        map
 ):
 
-    for iVar in mirrorMap:
+    for iVar in map:
         if iVar in df.columns:
             df[iVar] = -df[iVar]
     return df
