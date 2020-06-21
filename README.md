@@ -101,4 +101,4 @@ In particular, let *z* be the hypothetical beam direction and *x* be the transve
 * `zAngle(x1, z1, x0, z0)` returns the trajectory angle with respect to the beam direction in the *xz* plane, in radians.
 * `zProj(x1, z1, x0, z0, z2)` returns the transverse position `x2` of the trajectory projected to the longitudinal position `z2`.
 
-All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/stable/reference/arrays.ndarray.html)/[pandas.Series](https://pandas.pydata.org/pandas-docs/stable/reference/series.html) objects. The units of measurements have to be consistent to each other.
+All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/stable/reference/arrays.ndarray.html)/[pandas.Series](https://pandas.pydata.org/pandas-docs/stable/reference/series.html) objects. The units of measurement have to be consistent to each other.
