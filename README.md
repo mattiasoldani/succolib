@@ -115,4 +115,4 @@ f(x) = A \exp \big\{ - 0.5 \big[ {x - \mathrm{mpv} \over \mathrm{width}} + \exp\
 }$$;
 this is provided given in both the original and mirrored (*x*&ndash;$$\mathrm{mpv}$$ &rarr; $$\mathrm{mpv}$$&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively.
 
-<img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="628" height="471">
+<img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
