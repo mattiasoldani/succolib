@@ -10,7 +10,7 @@ setup(
     url="https://github.com/mattiasoldani/succolib",
     download_url = "https://github.com/mattiasoldani/succolib/archive/v"+version+".tar.gz",
     description="A set of handy, Python-based tools for the INSULAb detectors data analysis",
-    long_description=open("README.md").read(),
+    long_description=open("README_shorter.md").read(),
     long_description_content_type="text/markdown",
     packages=find_packages(),
     python_requires=">3.0",

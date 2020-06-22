@@ -1,0 +1,3 @@
+# succolib
+
+This is **succolib**, a library of handy Python functions for High-Energy Physics beamtests data analysis. In particular, it has been developed with a focus on the event-by-event analysis of the data collected with the INSULAb detectors &mdash; see, for example, the experimental configurations described [here](http://cds.cern.ch/record/2672249), [here](http://hdl.handle.net/10277/857) and [here](http://cds.cern.ch/record/1353904). Details can be found in the [succolib GitHub page](https://github.com/mattiasoldani/succolib)
