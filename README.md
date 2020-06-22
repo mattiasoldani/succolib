@@ -109,9 +109,9 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 
 Many frequently used functions are provided in a highly accessible form, such as:
 * the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as
-<img src="https://render.githubusercontent.com/render/math?math=\large \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big[ -(x - u)^2 / 2 \sigma^2 \big];">
+<img src="https://render.githubusercontent.com/render/math?math=\large \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big[ -(x - u)^2 / 2 \sigma^2 \big].">
 
-* the Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)`; it is defined as
+* The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)`; it is defined as
 <img src="https://render.githubusercontent.com/render/math?math=\large \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big\{ - 0.5 \big[ {x - \mathrm{mpv} \over \mathrm{width}} + \exp\big( {x - \mathrm{mpv} \over \mathrm{width}} \big) \big] \big\}.">
 
 <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
