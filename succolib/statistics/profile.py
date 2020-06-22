@@ -33,4 +33,4 @@ def hist2dToProfile(
                     yErr.append(0)
             else:
                 yErr.append(0)
-    return xVal, yVal, yErr
+    return np.array(xVal), np.array(yVal), np.array(yErr)
