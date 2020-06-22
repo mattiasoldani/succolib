@@ -95,10 +95,24 @@ in the `asciiToDfMulti()` arguments will open the whole file list of the example
 
 Tools are provided to reconstruct the particle trajectories starting from the single tracking detectors data. Focus has been put on 2D tracking with 1D-sensitive detectors (e.g. silicon microstrip layers, drift tube chambers, plastic hodoscopes, etcetera) in fixed-target experiments. 
 
-<img src="./readme_pics/succolib_tracking_scheme.png" alt="trackingSetup" width="628" height="300">
+<img src="./readme_pics/succolib_tracking_scheme.png" alt="readme_pics/succolib_tracking_scheme.png" width="628" height="300">
 
 In particular, let *z* be the hypothetical beam direction and *x* be the transverse coordinate measured by the tracking modules series (as depicted in the figure above); given the linear trajectory determined by the pairs *(x0, z0)* and *(x1, z1)*, *x0* and *x1* corresponding to the (single) particle hit positions measured by an upstream (at *z0*) and a downstream (at *z1*) tracking module respectively:
 * `zAngle(x1, z1, x0, z0)` returns the trajectory angle with respect to the beam direction in the *xz* plane, in radians.
 * `zProj(x1, z1, x0, z0, z2)` returns the transverse position `x2` of the trajectory projected to the longitudinal position `z2`.
 
 All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/stable/reference/arrays.ndarray.html)/[pandas.Series](https://pandas.pydata.org/pandas-docs/stable/reference/series.html) objects. The units of measurement have to be consistent to each other.
+
+---
+
+### some mathematical and statistical tools
+
+Many frequently used functions are provided in a highly accessible form, such as:
+* the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as $${ f(x) = A \exp \big[ -(x - u)^2 / 2 \sigma^2 \big] }$$.
+* the Moyal approximation of the Landau distribution, defined as
+$${
+f(x) = A \exp \big\{ - 0.5 \big[ {x - \mathrm{mpv} \over \mathrm{width}} + \exp\big( {x - \mathrm{mpv} \over \mathrm{width}} \big) \big] \big\}
+}$$;
+this is provided given in both the original and mirrored (*x*&ndash;$$\mathrm{mpv}$$ &rarr; $$\mathrm{mpv}$$&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively.
+
+<img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="628" height="471">
