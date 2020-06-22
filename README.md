@@ -112,9 +112,7 @@ Many frequently used functions are provided in a highly accessible form, such as
 <img src="https://render.githubusercontent.com/render/math?math=\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big[ -(x - u)^2 / 2 \sigma^2 \big].">
 
 * the Moyal approximation of the Landau distribution, defined as
-$${
-f(x) = A \exp \big\{ - 0.5 \big[ {x - \mathrm{mpv} \over \mathrm{width}} + \exp\big( {x - \mathrm{mpv} \over \mathrm{width}} \big) \big] \big\}
-}$$;
+<img src="https://render.githubusercontent.com/render/math?math=\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big\{ - 0.5 \big[ {x - \mathrm{mpv} \over \mathrm{width}} + \exp\big( {x - \mathrm{mpv} \over \mathrm{width}} \big) \big] \big\}">
 this is provided given in both the original and mirrored (*x*&ndash;$$\mathrm{mpv}$$ &rarr; $$\mathrm{mpv}$$&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively.
 
 <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
