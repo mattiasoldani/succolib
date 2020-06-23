@@ -95,7 +95,7 @@ in the `asciiToDfMulti()` arguments will open the whole file list of the example
 
 Tools are provided to reconstruct the particle trajectories starting from the single tracking detectors data. Focus has been put on 2D tracking with 1D-sensitive detectors (e.g. silicon microstrip layers, drift tube chambers, plastic hodoscopes, etcetera) in fixed-target experiments. 
 
-<img src="./readme_pics/succolib_tracking_scheme.png" alt="readme_pics/succolib_tracking_scheme.png" width="628" height="300" style="background-color:white;">
+<img src="./readme_pics/succolib_tracking_scheme.png" alt="readme_pics/succolib_tracking_scheme.png" width="628" height="300">
 
 In particular, let *z* be the hypothetical beam direction and *x* be the transverse coordinate measured by the tracking modules series (as depicted in the figure above); given the linear trajectory determined by the pairs *(x0, z0)* and *(x1, z1)*, *x0* and *x1* corresponding to the (single) particle hit positions measured by an upstream (at *z0*) and a downstream (at *z1*) tracking module respectively:
 * `zAngle(x1, z1, x0, z0)` returns the trajectory angle with respect to the beam direction in the *xz* plane, in radians.
@@ -109,9 +109,9 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 
 Many frequently used functions are provided in a highly accessible form, such as:
 * the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as
-<img src="https://render.githubusercontent.com/render/math?math=\large \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big]." style="background-color:white;">
+<img src="https://render.githubusercontent.com/render/math?math=\large \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].">
 
 * The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively; it is defined as
-<img src="https://render.githubusercontent.com/render/math?math=\large \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}." style="background-color:white;">
+<img src="https://render.githubusercontent.com/render/math?math=\large \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
 
 <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
