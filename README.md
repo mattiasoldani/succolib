@@ -112,12 +112,12 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 Many frequently used functions are provided in a highly accessible form, such as:
 * the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as
 <p align="center">
-  <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].">
+  <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big]." style="background-color:powderblue;">
 </p>
 
 * The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively; it is defined as
 <p align="center">
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
+    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}." style="background-color:powderblue;">
 </p>
 
 <p align="center">
