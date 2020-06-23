@@ -17,6 +17,8 @@ Dependencies:
 
 Note: [ROOT](https://root.cern.ch/) itself is not required.
 
+Found a bug? Or simply have some questions or comments you'd like to talk about? Feel free to contact me at <mattiasoldani93@gmail.com>!
+
 ---
 
 ### Data input and handling
