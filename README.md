@@ -142,6 +142,6 @@ Note: the error associated to single-entry *x*-slices is automatically set to ze
 The function returns 3 numpy.array objects, corresponding to the *x*, *y* and &sigma;*(y)* arrays respectively.
 
 <p align="center">
-    <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_profile.png" width="500" height="375">
+    <img src="./readme_pics/test_plots_profile.png" alt="readme_pics/test_plots_profile.png" width="500" height="375">
 </p>
 
