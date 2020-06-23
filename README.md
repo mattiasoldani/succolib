@@ -19,7 +19,7 @@ Note: [ROOT](https://root.cern.ch/) itself is not required.
 
 ---
 
-### data input and handling
+### Data input and handling
 
 Functions are provided to open
 * sets of equally formatted text files (e.g. DAT files), and
@@ -64,7 +64,7 @@ respectively. Here
 
 Both functions return a single [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html) and the elapsed time in seconds.
 
-##### filesets structure
+##### Filesets structure
 
 Multiple filesets can be opened at a time, a fileset being a set of files coming from the same data taking run. In turn, each fileset can consist of multiple files. All the filenames must share the same format, differing only in one (optionally two) part(s): the part which unambiguously identifies the fileset, i.e. the fileset ID and, in case of multiple files per fileset, the part that differentiates the names of the single files. For example, the file list
 ```shell
@@ -84,14 +84,14 @@ fileIndex = ["000000", "0001", "ABC"]
 ```
 in the `asciiToDfMulti()` arguments will open the whole file list of the example above.
 
-##### miscellaneous
+##### Miscellaneous
 
 * Use the `dfReshape(df, map, bBrackets=True)` function to rename the variables in the already existing `df` DataFrame and, if `bBrackets` is set to `True` (as it is in `rootToDfMulti()`), to remove square brackets from all the DataFrame variable names. The `map` format is the same as `treeMap` in `rootToDfMulti()`. The updated `df` is returned.
 * `dfMirror(df, map)` perform the transformation *x* &rarr; *&ndash;x* to the variables in the already existing `df` DataFrame whose names are listed in the `map` list. The updated `df` is returned.
 
 ---
 
-### basic particle tracking
+### Basic particle tracking
 
 Tools are provided to reconstruct the particle trajectories starting from the single tracking detectors data. Focus has been put on 2D tracking with 1D-sensitive detectors (e.g. silicon microstrip layers, drift tube chambers, plastic hodoscopes, etcetera) in fixed-target experiments. 
 
@@ -107,7 +107,9 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 
 ---
 
-### some mathematical and statistical tools
+### Some mathematical and statistical tools
+
+##### Probability distributions
 
 Many frequently used functions are provided in a highly accessible form, such as:
 * the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as
@@ -119,9 +121,27 @@ Many frequently used functions are provided in a highly accessible form, such as
 * The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively; it is defined as
 
 <p align="center">    
-<img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
+    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
 </p>
 
 <p align="center">
     <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
 </p>
+
+##### Profile plot (compatible with [matplotlib](https://matplotlib.org/))
+
+Inspired by the [ROOT TProfile object](https://root.cern.ch/doc/master/classTProfile.html), the function `hist2dToProfile(hist2d, errType)` computes the profile plot *y(x)* associated to the 2-dimensional histogram representing the *(x, y)* space. Its arguments are
+* `hist2d`, the object returned by the [matplotlib.pyplot.hist2d](https://matplotlib.org/api/_as_gen/matplotlib.pyplot.hist2d.html) call that draws the histogram, and
+* `errType`, a string for the selection of the error type to be associated to the output *y* values &mdash; &sigma;*(y)*; in particular
+    * if `errType = "std"` the standard deviations of the distributions along *y* are used,
+    * if `errType = "mean"` the errors on the distribution mean values are used,
+    * in any other case, all the errors are set to zero.
+
+Note: the error associated to single-entry *x*-slices is automatically set to zero. Moreover, in case of empty *x*-slices, no profile plot entry is created.
+
+The function returns 3 numpy.array objects, corresponding to the *x*, *y* and &sigma;*(y)* arrays respectively.
+
+<p align="center">
+    <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_profile.png" width="500" height="375">
+</p>
+
