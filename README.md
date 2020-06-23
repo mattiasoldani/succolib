@@ -120,7 +120,9 @@ Many frequently used functions are provided in a highly accessible form, such as
 
 <p align="center">
     <div class="bg-gray-dark p-2">
+        
         <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}."><\img>
+        
     <\div>
 </p>
 
