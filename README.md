@@ -1,5 +1,11 @@
 # succolib
 
+<style>
+body {
+  background-color: #FFFFFF;
+}
+</style>
+
 [![pypiProject](https://img.shields.io/pypi/v/succolib.svg)](https://pypi.org/project/succolib/) [![python](https://img.shields.io/badge/python-3-blue.svg)](https://www.python.org/)
 
 This is **succolib**, a library of handy Python functions for High-Energy Physics beamtests data analysis. In particular, it has been developed with a focus on the event-by-event analysis of the data collected with the INSULAb detectors &mdash; see, for example, the experimental configurations described [here](http://cds.cern.ch/record/2672249), [here](http://hdl.handle.net/10277/857) and [here](http://cds.cern.ch/record/1353904).
@@ -112,12 +118,16 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 Many frequently used functions are provided in a highly accessible form, such as:
 * the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as
 <p align="center">
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].">
+    <body>
+        <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].">
+    </body>
 </p>
 
 * The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively; it is defined as
 <p align="center">
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
+    <body>
+        <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
+    </body>
 </p>
 
 <p align="center">
