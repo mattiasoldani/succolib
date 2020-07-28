@@ -109,7 +109,7 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 
 ---
 
-### Some mathematical and statistical tools
+### Some mathematical, statistical and visualisation tools
 
 ##### Probability distributions
 
@@ -147,3 +147,33 @@ The function returns 3 numpy.array objects, corresponding to the *x*, *y* and &s
     <img src="./readme_pics/test_plots_profile.png" alt="readme_pics/test_plots_profile.png" width="500" height="375">
 </p>
 
+##### Ratio between 2-dimensional histograms
+
+The function
+
+```python
+hist2dRatio(
+    xNum,
+    yNum,
+    xDen, 
+    yDen,
+    bins = None,
+    range = None,
+    bPlot = True,
+    ax = None,
+    norm = None,
+    cmap = None
+)
+```
+
+computes the ratio between the 2-dimensional histograms created with the (array-like) input values
+* `yNum` versus `xNum` &mdash; at the numerator, and
+* `yDen` versus `xDen` &mdash; at the denominator,
+
+and with the common parameters `bins` and `range` with the same format and default values as in [matplotlib.pyplot.hist2d](https://matplotlib.org/api/_as_gen/matplotlib.pyplot.hist2d.html). The function always returns a tuple with the same format of the one returned by matplotlib.pyplot.hist2d &mdash; elements 0 to 2, i.e. the bin value matrix, the abscissas bin array and the ordinates bin array respectively. In case of empty bins in the denominator histogram, all the corresponding zeros are replaced with NaNs (`numpy.nan`), which in turn correspond to NaNs in the ratio histogram.
+
+The ratio histogram is drawn only if `bPlot = True` (default). The plot is drawn into `ax` (a [matplotlib.axes.Axes](https://matplotlib.org/3.3.0/api/axes_api.html#matplotlib.axes.Axes) object) if the latter is given, otherwise (`ax = None`) the current figure is exploited. Moreover, some graphical settings are available, with the same format and default values as in [matplotlib.pyplot.imshow](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.imshow.html).
+
+<p align="center">
+    <img src="./readme_pics/test_plots_hist2dRatio.png" alt="readme_pics/test_plots_hist2dRatio.png" width="700" height="525">
+</p>
