@@ -18,7 +18,7 @@ def eventSmear(
         return {}
     
     for s in lsVar+lsSigma:  # all the variables in lsVar+lsSigma must be available in the input dataframe
-        if not (s in df.columns):
+        if not (s in dfIn.columns):
             if bVerbose:
                 print("variable %s not in input dataframe --> operation not performed")
             return {}
@@ -30,7 +30,7 @@ def eventSmear(
     ind = list(dfIn.index)
     var = {}
     for iVar in lsVar+lsSigma:  # each dfIn variable into a list; lsVar-then-lsSigma; both elements of lsVar & lsSigma are included here
-        var.update({iVar: list(df[iVar])})
+        var.update({iVar: list(dfIn[iVar])})
     
     # preparing the output dictionary (original index & values included only if bKeepOld is True)
     dictOut = {"old_index": np.ndarray(shape=nIter*dfIn.count()[0])} if bKeepOld else {}
