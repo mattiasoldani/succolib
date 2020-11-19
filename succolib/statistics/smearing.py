@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 ########################################################################################################################
 
@@ -7,21 +8,28 @@ def eventSmear(
     lsVar,
     lsSigma,
     nIter,
+    bSmearSingleIter=False,
     bKeepOld=False,
     bVerbose=False
 ):
+    
+    t0 = time.time()  # chronometer start
     
     # check whether the input arguments make sense --> if not, returns empty dictionary
     if len(lsVar) != len(lsSigma):  # lsVar must have the same length as lsSigma
         if bVerbose:
             print ("list of variables and list of corresponding errors have different length --> operation not performed")
-        return {}
+        t1 = time.time()  # chronometer stop
+        dt = t1 - t0
+        return {}, dt
     
     for s in lsVar+lsSigma:  # all the variables in lsVar+lsSigma must be available in the input dataframe
         if not (s in dfIn.columns):
             if bVerbose:
                 print("variable %s not in input dataframe --> operation not performed")
-            return {}
+            t1 = time.time()  # chronometer stop
+            dt = t1 - t0
+            return {}, dt
     
     # setting up input dataframe properly
     # events in which at least 1 of the variables to be studied are NaN are excluded
@@ -51,7 +59,8 @@ def eventSmear(
     
         # gaussian doping
         covMatr = np.zeros((len(lsVar), len(lsVar)), float)   
-        if nIter > 1:  # note: if nIter <= 1, null covariance matrix is used --> output data equal the input ones
+        if (nIter > 1) | ((nIter == 1) & bSmearSingleIter):
+        # note: if nIter < 1 or =1 in case bSmearSingleIter=True, null covariance matrix is used --> output data equal the input ones
             np.fill_diagonal(covMatr, np.array(stds)**2)
         outStat = np.random.multivariate_normal(means, covMatr, nIter).T
         
@@ -61,5 +70,7 @@ def eventSmear(
             if bKeepOld:
                 dictOut["old_"+iVar][i*nIter:(i+1)*nIter] = np.array([means[k] for j in range(nIter)])
                 dictOut["old_index"][i*nIter:(i+1)*nIter] = np.array([ind[i] for j in range(nIter)])
-            
-    return dictOut
+
+    t1 = time.time()  # chronometer stop
+    dt = t1 - t0
+    return dictOut, dt
