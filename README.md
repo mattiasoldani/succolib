@@ -177,3 +177,37 @@ The ratio histogram is drawn only if `bPlot = True` (optional). The plot is draw
 <p align="center">
     <img src="./readme_pics/test_plots_hist2dRatio.png" alt="readme_pics/test_plots_hist2dRatio.png" width="700" height="525">
 </p>
+
+##### Event-by-event gaussian smearing
+
+The function
+
+```python
+def eventSmear(
+    dfIn,
+    lsVar,
+    lsSigma,
+    nIter,
+    bKeepOld = False,
+    bVerbose = False
+)
+```
+
+allows to apply a gaussian smearing to the variables of the `dfIn` DataFrame whose name are listed in the list-like object `lsVar` on an event-by-event basis. For each DataFrame row, a set of `nIter` (integer) different events is created, with randomly distributed values for the selected variables according to Gaussian distributions with the original event values as centres and corresponding error values, which must be defined in `dfIn` with the names listed in the list-like object `lsSigma`, as sigmas. For each element of `lsVar` there must be a corresponding element in `lsSigma`, so that the two elements of each variable-pair appear in the two objects in the same order; if `len(lsVar)` differs from `len(lsSigma)` or if any of the elements in the two objects does not correspond to a `dfIn` column, an empty dictionary is returned, otherwise a dictionary with the variable names (lists of smeared values) as keys (values) is returned &mdash; the length of each value of the latter being `nIter` times the number of rows in `dfIn`.
+
+For instance, some examples of the application of `eventSmear` to the DataFrame
+
+```python
+dfIn = pd.DataFrame(data={
+    "A" : [1, 2, 5, 10, 20, 35],
+    "B" : [1, 3, 5, 5, 3, 1],
+    "eA" : [1, 1, 1, 0.8, 1.5, 3],  # errors to A values
+    "eB" : [1, 1, 1, 0.8, 1.2, 1.4],  # errors to B values
+})
+```
+
+are shown in the figure below.
+
+<p align="center">
+    <img src="./readme_pics/test_plots_eventSmearing.png" alt="readme_pics/test_plots_eventSmearing.png" width="700" height="525">
+</p>
