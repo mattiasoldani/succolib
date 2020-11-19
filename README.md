@@ -178,7 +178,7 @@ The ratio histogram is drawn only if `bPlot = True` (optional). The plot is draw
     <img src="./readme_pics/test_plots_hist2dRatio.png" alt="readme_pics/test_plots_hist2dRatio.png" width="700" height="525">
 </p>
 
-##### Event-by-event gaussian smearing
+##### Event-by-event Gaussian smearing
 
 The function
 
@@ -188,12 +188,15 @@ def eventSmear(
     lsVar,
     lsSigma,
     nIter,
+    bSmearSingleIter = False,
     bKeepOld = False,
     bVerbose = False
 )
 ```
 
-applies a gaussian smearing to the variables of the `dfIn` DataFrame whose name are listed in the list-like object `lsVar` on an event-by-event basis. For each DataFrame row, a set of `nIter` (integer) different events is created, with randomly distributed values for the selected variables according to Gaussian distributions with the original event values as centres and corresponding error values, which must be defined in `dfIn` with the names listed in the list-like object `lsSigma`, as sigmas. For each element of `lsVar` there must be a corresponding element in `lsSigma`, so that the two elements of each variable-pair appear in the two objects in the same order; if `len(lsVar)` differs from `len(lsSigma)` or if any of the elements in the two objects does not correspond to a `dfIn` column, an empty dictionary is returned, otherwise a dictionary with the variable names (lists of smeared values) as keys (values) is returned &mdash; the length of each value of the latter being `nIter` times the number of rows in `dfIn`. If `bKeepOld = True`, the original values of the `lsVar` variables, as well as the input DataFrame index values of the original events, are also written into the output dictionary with the prefix "old_" to the names.
+applies a Gaussian smearing to the variables of the `dfIn` DataFrame whose name are listed in the list-like object `lsVar` on an event-by-event basis. For each DataFrame row, a set of `nIter` (integer >= 1) different events is created, with randomly distributed values for the selected variables according to Gaussian distributions with the original event values as centres and corresponding error values, which must be defined in `dfIn` with the names listed in the list-like object `lsSigma`, as sigmas. For each element of `lsVar` there must be a corresponding element in `lsSigma`, so that the two elements of each variable-pair appear in the two objects in the same order; if `len(lsVar)` differs from `len(lsSigma)` or if any of the elements in the two objects does not correspond to a `dfIn` column, an empty dictionary is returned, otherwise a dictionary with the variable names (lists of smeared values) as keys (values) is returned &mdash; the length of each value of the latter being `nIter` times the number of rows in `dfIn`. The elapsed time in seconds is always returned as the second output.
+
+In the limit case `nIter = 1`, the Gaussian smearing is only applied if `bSmearSingleIter = True` (optional, uneffective for other values of `nIter`). Furthermore, if `bKeepOld = True` (optional), the original values of the `lsVar` variables, as well as the input DataFrame index values of the original events, are also written into the output dictionary with the prefix "old_" to the names. 
 
 For instance, some examples of the application of `eventSmear` to the DataFrame
 
