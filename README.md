@@ -209,5 +209,5 @@ dfIn = pd.DataFrame(data={
 are shown in the figure below.
 
 <p align="center">
-    <img src="./readme_pics/test_plots_eventSmearing.png" alt="readme_pics/test_plots_eventSmearing.png" width="700" height="525">
+    <img src="./readme_pics/test_plots_eventSmear.png" alt="readme_pics/test_plots_eventSmearing.png" width="700" height="525">
 </p>
