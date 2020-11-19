@@ -51,7 +51,7 @@ def eventSmear(
     
         # gaussian doping
         covMatr = np.zeros((len(lsVar), len(lsVar)), float)   
-        if nIter != 1:  # note: if nIter == 1, null covariance matrix is used --> output data equal the input ones
+        if nIter > 1:  # note: if nIter <= 1, null covariance matrix is used --> output data equal the input ones
             np.fill_diagonal(covMatr, np.array(stds)**2)
         outStat = np.random.multivariate_normal(means, covMatr, nIter).T
         
