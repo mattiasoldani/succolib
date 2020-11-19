@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = "2020.9.0"
+version = "2020.11.0"
 
 setup(
     author="Mattia Soldani",
