@@ -36,7 +36,8 @@ asciiToDfMulti(
     nLinesEv = 1,
     descFrac = {},
     mirrorMap = {},
-    bVerbose = False
+    bVerbose = False,
+    bProgress = False,
 )
 ```
 and
@@ -49,7 +50,8 @@ rootToDfMulti(
     descFrac = {},
     treeMap = {},
     mirrorMap = {},
-    bVerbose = False
+    bVerbose = False,
+    bProgress = False,
 )
 ```
 respectively. Here
@@ -59,6 +61,7 @@ respectively. Here
 * `descFrac` (optional) is the fraction of events to be loaded per file &mdash; it is a dictionary with fileset IDs as keys and values between 0 and 1;
 * `mirrorMap` (optional) is a dictionary with fileset IDs as keys and the corresponding lists of the DataFrame variables to be mirrored, i.e. *x* &rarr; *&ndash;x*, as values;
 * `bVerbose` (optional) is a boolean that toggles the verbose (quiet) mode if set to `True` (`False`);
+* `bProgress` (optional) is a boolean that enables (disables) the progressbar visualisation if set to `True` (`False`);
 * `asciiMap` (`asciiToDfMulti` only) is the list of the names to be given to the file columns, from left to right &mdash; in case of multiple rows per event (see `nLinesEv`) names must fill the list from left to right for each row, from top to bottom;
 * `nLinesEv` (optional &mdash; `asciiToDfMulti` only) is the number of text file lines associated to each event;
 * `treeName` (`rootToDfMulti` only) is the name of the ROOT trees to be opened &mdash; same for all the ROOT files;
