@@ -16,7 +16,8 @@ def rootToDfMulti(
         descFrac = {},
         treeMap = {},
         mirrorMap = {},
-        bVerbose = False
+        bVerbose = False,
+        bProgress = False,
 ):
 
     t0 = time.time()  # chronometer start
@@ -30,7 +31,7 @@ def rootToDfMulti(
         dfTemp = pd.DataFrame()
         if bVerbose:
             print("(%d/%d) %s -- descaling fraction: %14.12f" % (i + 1, len(fileIndex), iIndex, descFrac[iIndex]))
-        for iName in tqdm((names)) if bVerbose else names:  # for each value of iIndex, look for all the corresponding files
+        for iName in tqdm((names)) if (bVerbose & bProgress) else names:  # for each value of iIndex, look for all the corresponding files
             tree = uproot.open(iName)[treeName]
             dfTemp0 = tree.pandas.df()
             dfTemp = dfTemp.append(dfTemp0[dfTemp0.index % int(1 / descFrac[iIndex]) == 0], ignore_index=True, sort=False)

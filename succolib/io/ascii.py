@@ -16,14 +16,15 @@ def asciiToDf(
         nLinesEv = 1,
         descFrac = 1,
         mirrorMap = (),  # this is a tuple here, but a dictionary in asciiToDfMulti() (i.e. the "main" function)
-        bVerbose = False
+        bVerbose = False,
+        bProgress = False,
 ):
 
     t0 = time.time()  # chronometer start
     names = sorted(glob.glob(nameFormat.replace("YYYYYY", "*")))  # list of all the filenames of the current run
     df = pd.DataFrame()
     descFrac = 1e-12 if descFrac <= 0 else (descFrac if descFrac <= 1 else 1)
-    for iName in tqdm((names)) if bVerbose else names:
+    for iName in tqdm((names)) if (bVerbose & bProgress) else names:
         if os.stat(iName).st_size > 0:
             if nLinesEv == 1:
                 dataTableTemp = np.loadtxt(iName, unpack=False, ndmin=2)
