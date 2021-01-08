@@ -62,12 +62,12 @@ def asciiToDfMulti(
 
     t0 = time.time()  # chronometer start
     df = pd.DataFrame()
-    for i, iIndex in tqdm(enumerate(sorted(fileIndex))) if (bVerbose & bProgress) else enumerate(sorted(fileIndex)):
+    for i, iIndex in enumerate(sorted(fileIndex)):
         if not (iIndex in descFrac.keys()):
             descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1
         if bVerbose:
             print("(%d/%d) %s -- descaling fraction: %14.12f" % (i+1, len(fileIndex), iIndex, descFrac[iIndex]))
-        dfTemp, _ = asciiToDf(nameFormat.replace("XXXXXX", iIndex), asciiMap, nLinesEv, descFrac[iIndex], bVerbose=bVerbose)
+        dfTemp, _ = asciiToDf(nameFormat.replace("XXXXXX", iIndex), asciiMap, nLinesEv, descFrac[iIndex], bVerbose=bVerbose, bProgress=bProgress)
 
         # data mirroring according to mirrorMap, which differs from iLayer to iLayer
         if iIndex in mirrorMap:
