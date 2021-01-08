@@ -56,12 +56,13 @@ def asciiToDfMulti(
         nLinesEv = 1,
         descFrac = {},
         mirrorMap = {},
-        bVerbose = False
+        bVerbose = False,
+        bProgress = False,
 ):
 
     t0 = time.time()  # chronometer start
     df = pd.DataFrame()
-    for i, iIndex in enumerate(sorted(fileIndex)):
+    for i, iIndex in tqdm(enumerate(sorted(fileIndex))) if (bVerbose & bProgress) else enumerate(sorted(fileIndex)):
         if not (iIndex in descFrac.keys()):
             descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1
         if bVerbose:
