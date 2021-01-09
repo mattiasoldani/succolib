@@ -133,10 +133,10 @@ Many frequently used functions are provided in a highly accessible form, such as
     <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
 </p>
 
-* The approximate half-width of the multiple Coulomb scattering (MCS) angular distribution &mdash; `fMCS(E, x, x0, z, bLogTerm)`, where `E` is the projectile energy in GeV, `x` is the thickness of the crossed medium, `x0` (optional, 1 by default) is the medium radiation length, `z` (optional, 1 by default) is the projectile charge in units of electron charge and `bLogTerm` (default, `True` by default) is a boolean determining whether to include the logarithmic term in the formula below. Note that, to compute the MCS contribution using the medium thickness in units of radiation length directly, it is sufficient to leave `x0 = 1`.
+* The approximate half-width of the multiple Coulomb scattering (MCS) angular distribution &mdash; `fMCS(E, x, X0, z, bLogTerm)`, where `E` is the projectile energy in GeV, `x` is the thickness of the crossed medium, `X0` (optional, 1 by default) is the medium radiation length, `z` (optional, 1 by default) is the projectile charge in units of electron charge and `bLogTerm` (default, `True` by default) is a boolean determining whether to include the logarithmic term in the formula below. Note that, to compute the MCS contribution using the medium thickness in units of radiation length directly, it is sufficient to leave `X0 = 1`.
 
 <p align="center">    
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = {{13.6~\mathrm{MeV} \over E}.">
+    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = {13.6~\mathrm{MeV}} \over E z \big( x \over X_{0} \big)^{1 \over 2} \big[ 1 + 0.038 ln  \big( x \over X_{0} \big) \big].">
 </p>
 
 ##### Profile plot (compatible with [matplotlib](https://matplotlib.org/))
