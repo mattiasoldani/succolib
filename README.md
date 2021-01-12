@@ -13,7 +13,7 @@ Install succolib, along with all its dependencies, via `pip install succolib`.
 
 Dependencies:
 
-[![numpy](https://img.shields.io/badge/numpy-grey.svg)](https://numpy.org/) [![pandas](https://img.shields.io/badge/pandas-grey.svg)](https://pandas.pydata.org/) [![tqdm](https://img.shields.io/badge/tqdm-grey.svg)](https://github.com/tqdm/tqdm) [![uproot](https://img.shields.io/badge/uproot-3-blue.svg)](https://github.com/scikit-hep/uproot)
+[![numpy](https://img.shields.io/badge/numpy-grey.svg)](https://numpy.org/) [![pandas](https://img.shields.io/badge/pandas-grey.svg)](https://pandas.pydata.org/) [![tqdm](https://img.shields.io/badge/tqdm-grey.svg)](https://github.com/tqdm/tqdm) [![uproot](https://img.shields.io/badge/uproot->=4-blue.svg)](https://github.com/scikit-hep/uproot)
 
 Note: [ROOT](https://root.cern.ch/) itself is not required.
 
