@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = "2021.1.2"
+version = "2021.1.3"
 
 setup(
     author="Mattia Soldani",
@@ -18,7 +18,7 @@ setup(
         "numpy",
         "pandas",
         "tqdm",
-        "uproot>=3.0,<4.0",
+        "uproot>=4.0",
     ],
     license="MIT",
     classifiers=[

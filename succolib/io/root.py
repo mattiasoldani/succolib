@@ -33,7 +33,7 @@ def rootToDfMulti(
             print("(%d/%d) %s -- descaling fraction: %14.12f" % (i + 1, len(fileIndex), iIndex, descFrac[iIndex]))
         for iName in tqdm((names)) if (bVerbose & bProgress) else names:  # for each value of iIndex, look for all the corresponding files
             tree = uproot.open(iName)[treeName]
-            dfTemp0 = tree.pandas.df()
+            dfTemp0 = tree.arrays(library="pd")
             dfTemp = dfTemp.append(dfTemp0[dfTemp0.index % int(1 / descFrac[iIndex]) == 0], ignore_index=True, sort=False)
 
         # data reshaping: removing the square brackets in the names & remapping all the names according to treeMap
