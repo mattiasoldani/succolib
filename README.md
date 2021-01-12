@@ -17,6 +17,8 @@ Dependencies:
 
 Note: [ROOT](https://root.cern.ch/) itself is not required.
 
+An extensive use of the succolib tools is made in the [anaKrys](https://github.com/mattiasoldani/anaKrys) project &mdash; give it a look!
+
 Found a bug? Or simply have any questions, comments or suggestions you'd like to talk about? Feel free to contact me at <mattiasoldani93@gmail.com>. And brace yourself, for the best is yet to come!
 
 ---
