@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = "2021.1.4"
+version = "2021.1.5"
 
 setup(
     author="Mattia Soldani",
