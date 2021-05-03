@@ -57,11 +57,10 @@ def rootToDfMulti(
         if len(fileIndexName)>0:
             if bVerbose:
                 print("%s also added to df" % fileIndexName)
-            if dfTemp.shape[0] > 0:
-                if not (fileIndexName in dfTemp.columns):
-                    dfTemp[fileIndexName] = str(iIndex)
-                else:
-                    dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
+            if not (fileIndexName in dfTemp.columns):
+                dfTemp[fileIndexName] = str(iIndex)
+            else:
+                dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
 
         df = df.append(dfTemp, ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop

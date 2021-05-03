@@ -80,12 +80,12 @@ def asciiToDfMulti(
 
         # fileIndexName column creation (if requested & not already existing)
         if len(fileIndexName)>0:
+            if bVerbose:
+                print("%s also added to df" % fileIndexName)
             if not (fileIndexName in dfTemp.columns):
                 dfTemp[fileIndexName] = str(iIndex)
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
-            if bVerbose:
-                print("%s also added to df" % fileIndexName)
 
         df = df.append(dfTemp, ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
