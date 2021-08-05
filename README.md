@@ -156,6 +156,8 @@ Many frequently used functions are provided in a highly accessible form, such as
     <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = {13.6 \mathrm{MeV}} \over E z \big( x \over {X_0} \big)^{1 \over 2} \big[1 %2B 0.038 \mathrm{ln}\big( x \over {X_0} \big) \big].">
 </p>
 
+* The absorption/conversion probability for a high-energy photon crossing a medium with 
+
 ##### Profile plot (compatible with [matplotlib](https://matplotlib.org/))
 
 Inspired by the [ROOT TProfile object](https://root.cern.ch/doc/master/classTProfile.html), the function `hist2dToProfile(hist2d, errType)` computes the profile plot *y(x)* associated to the 2-dimensional histogram representing the *(x, y)* space. Its arguments are
