@@ -12,7 +12,7 @@ from .misc import dfMirror
 # it's best to use npzToDfMulti() (which exploits this npzToDf()) also for single file opening
 def npzToDf(
         nameFormat,
-        asciiMap,
+        npzMap,
         arrayName,
         nLinesEv = 1,
         descFrac = 1,
@@ -33,7 +33,7 @@ def npzToDf(
                 dataTableTemp = dataTableTemp0
             else:
                 dataTableTemp = np.hstack([dataTableTemp0[i::nLinesEv] for i in range(nLinesEv)])
-            dfTemp = pd.DataFrame(dataTableTemp, columns=asciiMap)
+            dfTemp = pd.DataFrame(dataTableTemp, columns=npzMap)
             df = df.append(dfTemp[dfTemp.index % int(1 / descFrac) == 0], ignore_index=True, sort=False)
             df = dfMirror(df, mirrorMap)
     t1 = time.time()  # chronometer stop
@@ -45,7 +45,7 @@ def npzToDf(
 def npzToDfMulti(
         nameFormat,
         fileIndex,
-        asciiMap,
+        npzMap,
         arrayName,
         fileIndexName = "iIndex",
         nLinesEv = 1,
@@ -62,7 +62,7 @@ def npzToDfMulti(
             descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1
         if bVerbose:
             print("(%d/%d) %s -- descaling fraction: %14.12f" % (i+1, len(fileIndex), iIndex, descFrac[iIndex]))
-        dfTemp, _ = npzToDf(nameFormat.replace("XXXXXX", iIndex), asciiMap, arrayName, nLinesEv, descFrac[iIndex], bVerbose=bVerbose, bProgress=bProgress)
+        dfTemp, _ = npzToDf(nameFormat.replace("XXXXXX", iIndex), npzMap, arrayName, nLinesEv, descFrac[iIndex], bVerbose=bVerbose, bProgress=bProgress)
 
         # data mirroring according to mirrorMap, which differs from iLayer to iLayer
         if iIndex in mirrorMap:
