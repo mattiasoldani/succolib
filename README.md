@@ -156,7 +156,11 @@ Many frequently used functions are provided in a highly accessible form, such as
     <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = {13.6 \mathrm{MeV}} \over E z \big( x \over {X_0} \big)^{1 \over 2} \big[1 %2B 0.038 \mathrm{ln}\big( x \over {X_0} \big) \big].">
 </p>
 
-* The absorption/conversion probability for a high-energy photon crossing a medium with 
+* The absorption/conversion probability for a high-energy photon crossing a medium &mdash; `fGammaAbsExp(x, X0)`, where `x` is the thickness of the crossed medium and `X0` (optional, 1 by default) is the medium radiation length. Note that, to compute the probability using the medium thickness in units of radiation length directly, it is sufficient to leave `X0 = 1`.
+
+<p align="center">    
+    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = 1 - \exp \big( x \over {X_0} \big) ">
+</p>
 
 ##### Profile plot (compatible with [matplotlib](https://matplotlib.org/))
 
