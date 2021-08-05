@@ -209,7 +209,7 @@ The ratio histogram is drawn only if `bPlot = True` (optional). The plot is draw
 The function
 
 ```python
-def eventSmear(
+eventSmear(
     dfIn,
     lsVar,
     lsSigma,
