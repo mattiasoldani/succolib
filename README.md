@@ -26,7 +26,8 @@ Found a bug? Or simply have any questions, comments or suggestions you'd like to
 ### Data input and handling
 
 Functions are provided to open
-* sets of equally formatted text files (e.g. DAT files), and
+* sets of equally formatted text files (e.g. DAT files),
+* sets of equally formatted NumPy compressed array files (i.e. NPZ files), and
 * sets of ROOT files containing equally structured [tree objects](https://root.cern.ch/doc/master/classTTree.html):
 
 ```python
@@ -34,6 +35,20 @@ asciiToDfMulti(
     nameFormat,
     fileIndex,
     asciiMap,
+    fileIndexName = "iIndex",
+    nLinesEv = 1,
+    descFrac = {},
+    mirrorMap = {},
+    bVerbose = False,
+    bProgress = False,
+)
+```
+```python
+npzToDfMulti(
+    nameFormat,
+    fileIndex,
+    npzMap,
+    arrayName,
     fileIndexName = "iIndex",
     nLinesEv = 1,
     descFrac = {},
@@ -64,12 +79,12 @@ respectively. Here
 * `mirrorMap` (optional) is a dictionary with fileset IDs as keys and the corresponding lists of the DataFrame variables to be mirrored, i.e. *x* &rarr; *&ndash;x*, as values;
 * `bVerbose` (optional) is a boolean that toggles the verbose (quiet) mode if set to `True` (`False`);
 * `bProgress` (optional) is a boolean that enables (disables) the progressbar visualisation if set to `True` (`False`); it has lower priority than `bVerbose`, i.e. the progressbar is never visualised if `bVerbose = False`;
-* `asciiMap` (`asciiToDfMulti` only) is the list of the names to be given to the file columns, from left to right &mdash; in case of multiple rows per event (see `nLinesEv`) names must fill the list from left to right for each row, from top to bottom;
-* `nLinesEv` (optional &mdash; `asciiToDfMulti` only) is the number of text file lines associated to each event;
-* `treeName` (`rootToDfMulti` only) is the name of the ROOT trees to be opened &mdash; same for all the ROOT files;
+* `asciiMap` or `npzMap` (`asciiToDfMulti` or `npzToDfMulti` only respectively) is the list of the names to be given to the file columns, from left to right &mdash; in case of multiple rows per event (see `nLinesEv`) names must fill the list from left to right for each row, from top to bottom;
+* `nLinesEv` (optional &mdash; `asciiToDfMulti` and `npzToDfMulti` only) is the number of text file or NumPy array lines associated to each event;
+* `treeName` or `arrayName` (`rootToDfMulti` or `npzToDfMulti` only respectively) is the name of the ROOT trees or NumPy arrays to be opened &mdash; same for all the ROOT files or NumPy files;
 * `treeMap` (optional &mdash; `rootToDfMulti` only) is a dictionary used to replace the ROOT tree variable names with custom ones &mdash; set the custom (original) names as keys (values).
 
-Both functions return a single [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html) and the elapsed time in seconds.
+All these functions return a single [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/frame.html) and the elapsed time in seconds.
 
 ##### Filesets structure
 
