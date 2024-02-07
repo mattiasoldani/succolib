@@ -1,4 +1,5 @@
 import pandas as pd
+import awkward as ak
 import uproot
 import time
 import glob
@@ -84,7 +85,7 @@ def rootToAkMultiEssential(
     df = ak.Array([])
     for i, iIndex in enumerate(sorted(fileIndex)):
         names = sorted(glob.glob(nameFormat.replace("XXXXXX", iIndex).replace("YYYYYY", "*")))  # list of all the filenames of the current run
-        dictFiles = {name : treeName for filename in names}
+        dictFiles = {name : treeName for name in names}
         if not (iIndex in descFrac.keys()):
             descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1
         descFrac[iIndex] = 1e-12 if descFrac[iIndex] <= 0 else (descFrac[iIndex] if descFrac[iIndex] <= 1 else 1)
