@@ -66,3 +66,54 @@ def rootToDfMulti(
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
     return df, dt
+    
+########################################################################################################################
+
+def rootToAkMultiEssential(
+        nameFormat,
+        fileIndex,
+        treeName,
+        varlist,
+        chunksize=100,
+        fileIndexName = "iIndex",
+        descFrac = {},
+        bVerbose = False,
+):
+
+    t0 = time.time()  # chronometer start
+    df = ak.Array([])
+    for i, iIndex in enumerate(sorted(fileIndex)):
+        names = sorted(glob.glob(nameFormat.replace("XXXXXX", iIndex).replace("YYYYYY", "*")))  # list of all the filenames of the current run
+        dictFiles = {name : treeName for filename in names}
+        if not (iIndex in descFrac.keys()):
+            descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1
+        descFrac[iIndex] = 1e-12 if descFrac[iIndex] <= 0 else (descFrac[iIndex] if descFrac[iIndex] <= 1 else 1)
+        
+        dfTemp = ak.Array([])
+        if bVerbose:
+            print("(%d/%d) %s -- descaling fraction: %14.12f" % (i + 1, len(fileIndex), iIndex, descFrac[iIndex]))        
+        for ichunk, chunk in enumerate(uproot.iterate(dictFiles,
+            expressions=varlist, step_size=chunksize, allow_missing=True,
+        )):  # tqdm progress bar not supported in essential function
+            if ichunk==0:
+                dfTemp = chunk[0:int(len(chunk) * descFrac[iIndex])]
+            else:
+                dfTemp = ak.concatenate((dfTemp, chunk[0:int(len(chunk) * descFrac[iIndex])]))
+
+        # data name reshaping not supported in essential function
+
+        # data mirroring not supported in essential function
+
+        # fileIndexName column creation (if requested & not already existing -- after the data reshaping)
+        if len(fileIndexName)>0:
+            if bVerbose:
+                print("%s also added to df" % fileIndexName)
+            if not (fileIndexName in dfTemp.fields):
+                dfTemp[fileIndexName] = str(iIndex)
+            else:
+                dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
+
+        df = ak.concatenate((df, dfTemp))
+    t1 = time.time()  # chronometer stop
+    dt = t1 - t0
+    return df, dt
