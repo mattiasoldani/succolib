@@ -12,7 +12,7 @@ from .misc import dfReshape, dfMirror
 def rootToDfMulti(
         nameFormat,
         fileIndex,
-        treeName,
+        treeName = "t",
         fileIndexName = "iIndex",
         descFrac = {},
         treeMap = {},
@@ -73,8 +73,8 @@ def rootToDfMulti(
 def rootToAkMultiEssential(
         nameFormat,
         fileIndex,
-        treeName,
-        varlist,
+        treeName = "t",
+        varlist = [],
         chunksize=100,
         fileIndexName = "iIndex",
         descFrac = {},
@@ -111,8 +111,7 @@ def rootToAkMultiEssential(
                 print("%s also added to df" % fileIndexName)
             if not (fileIndexName in dfTemp.fields):
                 dfTemp[fileIndexName] = str(iIndex)
-            else:
-                dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
+            # iIndex of type string not supported in awkward arrays
 
         df = ak.concatenate((df, dfTemp))
     t1 = time.time()  # chronometer stop
