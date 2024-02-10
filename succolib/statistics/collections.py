@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 
-from ..succolib import fLandau, fGaus, cTrack
+from ..succolib import fLandau, fGaus, cTrack, cWaveForm
 
 ########################################################################################################################
 
@@ -410,11 +410,11 @@ class cTracksCollection(cCollection):
                 
                 if not (fit_ok):
                     fit_ok_global[iside] = False
-                    print("fit failed, exiting loop...")
+                    if self.bVerbose: print("fit failed, exiting loop...")
                     break
                 
                 if abs(par_temp[1])<1e-8:
-                    print("precision reached, exiting loop...")
+                    if self.bVerbose: print("precision reached, exiting loop...")
                     break
                                     
                 shifts_total[iside] += par_temp[1]
@@ -734,3 +734,566 @@ class cTracksCollection(cCollection):
 
         if bsave:
             fig.savefig(outname, dpi=self.__outfig_dpi)
+            
+########################################################################################################################
+
+class cWaveFormsCollection(cCollection):
+    def __init__(
+        self,
+        dataset,
+        varlist,
+        dictWfParams,
+        bVerbose = False,
+        bOutWfs = False,
+    ):
+        super().__init__()
+        
+        # attributes set via input:
+        
+        self.dataset = dataset
+        self.varlist = varlist
+        self.dictWfParams = dictWfParams
+        self.bVerbose = bVerbose
+        self.bOutWfs = bOutWfs
+        
+        # calculated attributes:
+        
+        self.__output_collection = {}
+        for var in self.varlist:
+            self.__output_collection.update({var : {
+                "base_mean" : [],
+                "base_rms" : [],
+                "ph" : [],
+                "peak_time" : [],
+                "charge" : [],
+                "snr" : [],
+            }})
+            if self.bOutWfs:
+                self.__output_collection[var].update({
+                    "x" : [],
+                    "y" : [],
+                })
+                
+        self.__hists_collection_latest = {}
+                
+        self.__outfig_dpi = 200
+        
+    # process all the waveforms and add results to the dataset
+    def full_calculations_output(self):                    
+            for isch, sch in enumerate(self.varlist):
+
+                for iev_data, ev_data in enumerate(self.dataset.data):
+                    if self.bVerbose:
+                        if iev_data%1000==0: print("doing channel %s, event #%d" % (sch, iev_data))
+
+                    wf_temp = cWaveForm(
+                        y0 = ev_data[sch], **self.dictWfParams[sch]
+                    )
+                    wf_temp.full_analysis()
+
+                    for out_var in self.__output_collection[sch]:
+                        attr_temp = wf_temp.__getattribute__(out_var)
+                        if iev_data==0:
+                            self.__output_collection[sch][out_var] = [attr_temp]
+                        else:
+                            self.__output_collection[sch][out_var] += [attr_temp]
+                            
+                self.dataset.add_vars({sch+"_out_"+k : ak.Array(v) for (k, v) in self.__output_collection[sch].items()})
+    
+    # create all the main (ph, time, charge) histograms --> return a dictionary with the histogram collection
+    def analyse_main_distributions(
+        self,
+        channel,  # (waveform) variable to plot among the loaded one, string
+        boolean,  # boolean to be applied to the dataset
+        range_time_sig,  # time interval in which to get signal, 2-entry array
+        range_time_bkg,  # time interval in which to get pedestal, 2-entry array
+        time_var = "peak_time",  # time variable to use, string
+        bins_ph = None,  # binning for PH distributions, like in hist. functions
+        bins_time = None,  # binning for time distributions, like in hist. functions
+        bins_charge = None,  # binning for charge distributions, like in hist. functions
+        bins_nev = None,  # binning for event nr. distributions, like in hist. functions
+        range_ph = None,  # range for PH distributions, 2-entry array or None
+        range_time = None,  # range for time distributions, 2-entry array or None
+        range_charge = None,  # range for charge distributions, 2-entry array or None
+    ):
+        
+        dataset_temp = self.dataset.cut_copy(boolean)
+        x0_base_range = self.dictWfParams[channel]["x0BaseRange"]
+        sign_base = 1 if self.dictWfParams[channel]["bPositive"] else -1
+        hists_collection = {}
+        
+        bins_time, range_time = self._tweak_bins_range(
+            dataset_temp.data["%s_out_%s"%(channel, time_var)], bins_time, range_time
+        )
+        bins_ph, range_ph = self._tweak_bins_range(
+            dataset_temp.data["%s_out_ph"%(channel)], bins_ph, range_ph
+        )
+        bins_charge, range_charge = self._tweak_bins_range(
+            dataset_temp.data["%s_out_charge"%(channel)], bins_charge, range_charge
+        )
+        bins_nev, range_nev = self._tweak_bins_range(
+            dataset_temp.data["index"], bins_nev, None
+        )
+        
+        hists_collection["hist2d_ph_%s"%(time_var)] = self.create_histo_2d(
+            "%s_out_ph"%(channel), "%s_out_%s"%(channel, time_var),
+            boolean, bins=(bins_ph, bins_time), range=(range_ph, range_time)
+        )
+        hists_collection["hist_time"] =\
+            self.create_histo_1d("%s_out_%s"%(channel, time_var), boolean, bins=bins_time, range=range_time)
+        hists_collection["hist_ph"] =\
+            self.create_histo_1d("%s_out_ph"%(channel), boolean, bins=bins_ph, range=range_ph)
+        hists_collection["hist_charge"] =\
+            self.create_histo_1d("%s_out_charge"%(channel), boolean, bins=bins_charge, range=range_charge)
+        
+        boolean_bkg = boolean &\
+            (self.dataset.data["%s_out_%s"%(channel, time_var)] > range_time_bkg[0]) &\
+            (self.dataset.data["%s_out_%s"%(channel, time_var)] < range_time_bkg[1])
+        hists_collection["hist_time_bkg"] =\
+            self.create_histo_1d("%s_out_%s"%(channel, time_var), boolean_bkg, bins=bins_time, range=range_time)
+        hists_collection["hist_ph_bkg0"] =\
+            self.create_histo_1d("%s_out_ph"%(channel), boolean_bkg, bins=bins_ph, range=range_ph)
+        hists_collection["hist_charge_bkg0"] =\
+            self.create_histo_1d("%s_out_charge"%(channel), boolean_bkg, bins=bins_charge, range=range_charge)
+        
+        boolean_sig = boolean &\
+            (self.dataset.data["%s_out_%s"%(channel, time_var)] > range_time_sig[0]) &\
+            (self.dataset.data["%s_out_%s"%(channel, time_var)] < range_time_sig[1])
+        hists_collection["hist_time_sig"] =\
+            self.create_histo_1d("%s_out_%s"%(channel, time_var), boolean_sig, bins=bins_time, range=range_time)
+        hists_collection["hist_ph_sig0"] =\
+            self.create_histo_1d("%s_out_ph"%(channel), boolean_sig, bins=bins_ph, range=range_ph)
+        hists_collection["hist_charge_sig0"] =\
+            self.create_histo_1d("%s_out_charge"%(channel), boolean_sig, bins=bins_charge, range=range_charge)
+        
+        hists_collection["hist_ph_bkg"] = hists_collection["hist_ph_bkg0"]
+        hists_collection["hist_charge_bkg"] = hists_collection["hist_charge_bkg0"]
+        hists_collection["hist_ph_bkg"][1] = hists_collection["hist_ph_bkg0"][1] *\
+            (range_time_sig[1]-range_time_sig[0])/(range_time_bkg[1]-range_time_bkg[0])
+        hists_collection["hist_charge_bkg"][1] = hists_collection["hist_charge_bkg0"][1] *\
+            (range_time_sig[1]-range_time_sig[0])/(range_time_bkg[1]-range_time_bkg[0])
+        
+        hists_collection["hist_ph_sig"] = hists_collection["hist_ph_sig0"]
+        hists_collection["hist_charge_sig"] = hists_collection["hist_charge_sig0"]
+        hists_collection["hist_ph_sig"][1] =\
+            hists_collection["hist_ph_sig0"][1] - hists_collection["hist_ph_bkg"][1]
+        hists_collection["hist_charge_sig"][1] =\
+            hists_collection["hist_charge_sig0"][1] - hists_collection["hist_charge_bkg"][1]
+        
+        hists_collection["hist2d_nev_%s"%(time_var)] = self.create_histo_2d(
+            "index", "%s_out_%s"%(channel, time_var),
+            boolean, bins=(bins_nev, bins_time), range=(range_nev, range_time)
+        )
+        hists_collection["hist2d_nev_base_mean"] = self.create_histo_2d(
+            "index", "%s_out_base_mean"%(channel),
+            boolean, bins=(bins_nev, 100),
+        )
+        hists_collection["hist2d_nev_ph"] = self.create_histo_2d(
+            "index", "%s_out_ph"%(channel),
+            boolean, bins=(bins_nev, bins_ph), range=(range_nev, range_ph)
+        )
+        hists_collection["hist2d_nev_charge"] = self.create_histo_2d(
+            "index", "%s_out_charge"%(channel),
+            boolean, bins=(bins_nev, bins_charge), range=(range_nev, range_charge)
+        )
+        
+        self.__hists_collection_latest = hists_collection
+        return hists_collection
+    
+    # draw three 1d histograms previously stored by create_histo_1d (total, bkg, sig)
+    # hist1d, hist1d_bkg, hist1d_sig are create_histo_1d output
+    # ax is the destination axis in a figure
+    # b_swap_axes is a boolean: is True, the plot is drawn with the axes swapped
+    def __draw_hist1d_bkg_sig(self, hist1d, hist1d_bkg, hist1d_sig, ax, b_swap_axes=False, blegend=True):
+        if b_swap_axes:
+            ax.fill_betweenx(hist1d[0], hist1d[1], step="mid", lw=0, alpha=0.2, color="C0")
+            ax.fill_betweenx(
+                hist1d_bkg[0], hist1d_bkg[1], step="mid", lw=1, edgecolor="purple", facecolor="#FF000000",
+                label="pedestal (sel . interval)" if blegend else None,
+            )
+            ax.fill_betweenx(
+                hist1d_sig[0], hist1d_sig[1], step="mid", lw=1, edgecolor="C1", facecolor="#FF000000",
+                label="signal (sel . interval)" if blegend else None,
+            )
+        else:
+            ax.fill_between(hist1d[0], hist1d[1], step="mid", lw=0, alpha=0.2, color="C0")
+            ax.plot(
+                hist1d_bkg[0], hist1d_bkg[1], drawstyle="steps-mid", lw=1, color="purple",
+                label="pedestal (sel . interval)" if blegend else None,
+            )
+            ax.plot(
+                hist1d_sig[0], hist1d_sig[1], drawstyle="steps-mid", lw=1, color="C1",
+                label="signal (sel . interval)" if blegend else None,
+            )
+                    
+    # plot waveforms as individual curves, with boolean --> create figure
+    def plot_wfs_curves(
+        self,
+        channel,  # (waveform) variable to plot among the loaded one, string
+        boolean = True,  # boolean to be applied to the dataset
+        plot_lims = None,  # plot limits, (2-entry array, 2-entry array) or None
+        bbaseline = False,  # boolean: if True (False), (don't) plot baseline info
+        figsize = (8, 6),  # figure size, 2-entry array
+        figtitle = "",  # string with the figure title
+        bsave = False,  # boolean: if True (False), (don't) save the figure
+        outname  = "./out.jpg",  # path and name of the figure output file, string
+    ):
+        
+        dataset_temp = self.dataset.cut_copy(boolean)
+        x0_base_range = self.dictWfParams[channel]["x0_base_range"]
+        unit_x = self.dictWfParams[channel]["unit_x"]
+        unit_y = self.dictWfParams[channel]["unit_y"]
+        sign_base = 1 if self.dictWfParams[channel]["positive"] else -1
+        
+        plot_lims = np.array(plot_lims, dtype=object)
+        
+        fig, ax = plt.subplots(figsize=figsize)
+        ax.grid(True)
+        ax.set_xlabel("time [%.2e s]" % unit_x)
+        ax.set_ylabel("voltage [%.2e V]" % unit_y)
+        
+        for iev_data, ev_data in enumerate(dataset_temp.data):
+            ax.plot(
+                ev_data["%s_out_x"%channel], 
+                ev_data["%s_out_y"%channel],
+                color="C0", lw=0.2
+            )
+
+        ax.axvline(0, color="k", lw=1, ls=":")
+        
+        if bbaseline:
+            ax.axvline(x0_base_range[0], color="red", lw=1)
+            ax.axvline(x0_base_range[1], color="red", lw=1)
+            ax.plot(
+                x0_base_range, np.mean(dataset_temp.data["%s_out_base_mean"%channel])*np.ones(2) * sign_base,
+                color="red", lw=1, label="(mean) baseline calculation"
+            )
+            ax.plot(
+                x0_base_range,
+                (
+                    np.mean(dataset_temp.data["%s_out_base_mean"%channel]) +\
+                    np.mean(dataset_temp.data["%s_out_base_rms"%channel])
+                )*np.ones(2) * sign_base,
+                color="red", lw=1, ls=":"
+            )
+            ax.plot(
+                x0_base_range,
+                (
+                    np.mean(dataset_temp.data["%s_out_base_mean"%channel]) -\
+                    np.mean(dataset_temp.data["%s_out_base_rms"%channel])
+                )*np.ones(2) * sign_base,
+                color="red", lw=1, ls=":"
+            )
+            ax.legend()
+
+        if not (plot_lims is None):
+            ax.set_xlim(plot_lims[0])
+            ax.set_ylim(plot_lims[1])
+            
+        fig.suptitle(figtitle)
+        fig.tight_layout()
+        
+        if bsave:
+            fig.savefig(outname, dpi=self.__outfig_dpi)
+            
+    # plot waveforms in a single 2d histogram, with boolean --> create figure
+    def plot_wfs_hist2d(
+        self,
+        channel,  # (waveform) variable to plot among the loaded one, string
+        boolean = True,  # boolean to be applied to the dataset
+        plot_lims = None,  # plot limits, (2-entry array, 2-entry array) or None
+        nbins = (100, 100),  # nr. of bins, integer or (integer, integer) or None
+        bbaseline = False,  # boolean: if True (False), (don't) plot baseline info
+        figsize = (8, 6),  # figure size, 2-entry array
+        figtitle = "",  # string with the figure title
+        blog = False,  # blog is a boolean: if True, toggle z log scale
+        bsave = False,  # boolean: if True (False), (don't) save the figure
+        outname  = "./out.jpg",  # path and name of the figure output file, string
+    ):
+        
+        dataset_temp = self.dataset.cut_copy(boolean)
+        x0_base_range = self.dictWfParams[channel]["x0_base_range"]
+        unit_x = self.dictWfParams[channel]["unit_x"]
+        unit_y = self.dictWfParams[channel]["unit_y"]
+        sign_base = 1 if self.dictWfParams[channel]["positive"] else -1
+        
+        plot_lims = np.array(plot_lims, dtype=object)
+        _, plot_lims[0] = self._tweak_bins_range(
+            dataset_temp.data["%s_out_x"%channel], None, plot_lims[0]
+        )
+        _, plot_lims[1] = self._tweak_bins_range(
+            dataset_temp.data["%s_out_y"%channel], None, plot_lims[1]
+        )
+        
+        fig, ax = plt.subplots(figsize=figsize)
+        ax.grid(True)
+        ax.set_xlabel("time [%.2e s]" % unit_x)
+        ax.set_ylabel("voltage [%.2e V]" % unit_y)
+        
+        hist_temp = self.create_histo_2d(
+            ak.flatten(dataset_temp.data["%s_out_x"%channel]),
+            ak.flatten(dataset_temp.data["%s_out_y"%channel]),
+            bins=nbins, range=plot_lims,
+        )
+        self._draw_hist2d(hist_temp, ax=ax, blog=blog)
+
+        ax.axvline(0, color="k", lw=1, ls=":")
+        
+        if bbaseline:
+            ax.axvline(x0_base_range[0], color="red", lw=1)
+            ax.axvline(x0_base_range[1], color="red", lw=1)
+            ax.plot(
+                x0_base_range, np.mean(dataset_temp.data["%s_out_base_mean"%channel])*np.ones(2) * sign_base,
+                color="red", lw=1, label="(mean) baseline calculation"
+            )
+            ax.plot(
+                x0_base_range,
+                (
+                    np.mean(dataset_temp.data["%s_out_base_mean"%channel]) +\
+                    np.mean(dataset_temp.data["%s_out_base_rms"%channel])
+                )*np.ones(2) * sign_base,
+                color="red", lw=1, ls=":"
+            )
+            ax.plot(
+                x0_base_range,
+                (
+                    np.mean(dataset_temp.data["%s_out_base_mean"%channel]) -\
+                    np.mean(dataset_temp.data["%s_out_base_rms"%channel])
+                )*np.ones(2) * sign_base,
+                color="red", lw=1, ls=":"
+            )
+            ax.legend()
+
+        if not (plot_lims is None):
+            ax.set_xlim(plot_lims[0])
+            ax.set_ylim(plot_lims[1])
+        
+        fig.suptitle(figtitle)
+        fig.tight_layout()
+        
+        if bsave:
+            fig.savefig(outname, dpi=self.__outfig_dpi)
+    
+    # plot (and fit some of the) global distributions, with boolean --> create figure
+    def plot_distributions_summary(
+        self,
+        channel,  # (waveform) variable to plot among the loaded one, string
+        range_time_sig,  # time interval in which to get signal, 2-entry array
+        range_time_bkg,  # time interval in which to get pedestal, 2-entry array
+        boolean = True,  # boolean to be applied to the dataset
+        time_var = "peak_time",  # time variable to use, string
+        range_ph = None,  # range for PH distributions, 2-entry array or None
+        range_time = None,  # range for time distributions, 2-entry array or None
+        range_charge = None,  # range for charge distributions, 2-entry array or None
+        bins_ph = None,  # binning for PH distributions, like in hist. functions
+        bins_time = None,  # binning for time distributions, like in hist. functions
+        bins_charge = None,  # binning for charge distributions, like in hist. functions
+        hists_collection = None,  # a hists_collection can be directly fed in this method*
+        bfit_ph = False,  # boolean: if True, fit the PH signal distribution
+        bfit_charge = False,  # boolean: if True, fit the charge signal distribution
+        apar_fit_ph = None,  # PH amplitude start parameter (if None, estimated)
+        upar_fit_ph = None,  # PH mean value start parameter (if None, estimated)
+        spar_fit_ph = None,  # PH width start parameter (if None, estimated)
+        apar_fit_charge = None,  # charge amplitude start parameter (if None, estimated)
+        upar_fit_charge = None,  # charge mean value start parameter (if None, estimated)
+        spar_fit_charge = None,  # charge width start parameter (if None, estimated)
+        figsize = (14, 9),  # figure size, 2-entry array
+        blog_ph_charge = True,  # boolean: if True, toggle log scale on PH and charge 1d plots
+        blog_time = True,  # boolean: if True, toggle log scale on time 1d plots
+        blogz = True,  # boolean: if True, toggle z log scale in 2d plot
+        figtitle = "",  # string with the figure title
+        bsave = False,  # boolean: if True (False), (don't) save the figure
+        outname  = "./out.jpg",  # path and name of the figure output file, string
+    ):
+        # * hists_collection is can be created elsewhere with analyse_main_distributions;
+        #   note that some of the other arguments are overwritten
+        
+        dataset_temp = self.dataset.cut_copy(boolean)
+        x0_base_range = self.dictWfParams[channel]["x0_base_range"]
+        unit_ph = self.dictWfParams[channel]["unit_y"]
+        unit_time = self.dictWfParams[channel]["unit_x"]
+        unit_charge = unit_ph * unit_time
+        
+        bins_time, range_time = self._tweak_bins_range(
+            dataset_temp.data["%s_out_%s"%(channel, time_var)], bins_time, range_time
+        )
+        bins_ph, range_ph = self._tweak_bins_range(
+            dataset_temp.data["%s_out_ph"%(channel)], bins_ph, range_ph
+        )
+        bins_charge, range_charge = self._tweak_bins_range(
+            dataset_temp.data["%s_out_charge"%(channel)], bins_charge, range_charge
+        )
+        
+        if hists_collection is None:
+            hists_collection = self.analyse_main_distributions(
+                channel=channel, boolean=boolean,
+                range_time_sig=range_time_sig, range_time_bkg=range_time_bkg, time_var=time_var, 
+                range_ph=range_ph, range_time=range_time, range_charge=range_charge,  
+                bins_ph=bins_ph, bins_time=bins_time, bins_charge=bins_charge,
+            )
+
+        fig, axs = plt.subplots(figsize=figsize, nrows=2, ncols=2)
+
+        ax = axs[0, 0]
+        self._draw_hist2d(hists_collection["hist2d_ph_%s"%(time_var)], ax, blog=blogz)
+        ax.axhline(range_time_sig[0], color="C1", lw=1, label="signal (sel . interval)")
+        ax.axhline(range_time_sig[1], color="C1", lw=1)
+        ax.axhline(range_time_bkg[0], color="purple", lw=1, label="pedestal (sel . interval)")
+        ax.axhline(range_time_bkg[1], color="purple", lw=1)
+        ax.axvline(0, color="k", lw=1, ls=":")
+        ax.axhline(0, color="k", lw=1, ls=":")
+        ax.axhline(x0_base_range[0], color="red", lw=1, label="baseline (sel. interval)")
+        ax.axhline(x0_base_range[1], color="red", lw=1)
+        if not (range_ph is None):
+            ax.set_xlim((range_ph[0], range_ph[1]))
+        if not (range_time is None):
+            ax.set_ylim((range_time[0], range_time[1]))
+        ax.grid(True)
+        ax.set_xlabel("PH [%.2e V]" % unit_ph)
+        ax.set_ylabel("time [%.2e s]" % unit_time)
+        ax.legend()
+        
+        ax = axs[0, 1]
+        self.__draw_hist1d_bkg_sig(
+            hists_collection["hist_time"], 
+            hists_collection["hist_time_bkg"], 
+            hists_collection["hist_time_sig"], 
+            ax, b_swap_axes=True, blegend=False,
+        )
+        ax.axhline(0, color="k", lw=1, ls=":")
+        ax.axhline(x0_base_range[0], color="red", lw=1, label="baseline (sel. interval)")
+        ax.axhline(x0_base_range[1], color="red", lw=1)
+        if not (range_time is None):
+            ax.set_ylim((range_time[0], range_time[1]))
+        ax.set_xscale("log" if blog_time else "linear")
+        ax.set_ylabel("time [%.2e s]" % unit_time)
+        ax.grid(True)
+        
+        ax = axs[1, 0]
+        self.__draw_hist1d_bkg_sig(
+            hists_collection["hist_ph"], 
+            hists_collection["hist_ph_bkg"], 
+            hists_collection["hist_ph_sig"], 
+            ax, blegend=False,
+        )
+        ax.axvline(0, color="k", lw=1, ls=":")
+        if not (range_ph is None):
+            ax.set_xlim((range_ph[0], range_ph[1]))
+        ax.set_yscale("log" if blog_ph_charge else "linear")
+        ax.set_xlabel("PH [%.2e V]" % unit_ph)
+        ax.grid(True)
+        if bfit_ph:
+            _, _ = self._fit_hist1d_landau(
+                hists_collection["hist_ph_sig"], ax=ax, bplot=True,
+                apar_fit=apar_fit_ph, upar_fit=upar_fit_ph, spar_fit=spar_fit_ph,
+                plot_color="green",
+            )        
+            ax.legend()
+
+        ax = axs[1, 1]
+        self.__draw_hist1d_bkg_sig(
+            hists_collection["hist_charge"], 
+            hists_collection["hist_charge_bkg"], 
+            hists_collection["hist_charge_sig"], 
+            ax, blegend=False,
+        )
+        ax.axvline(0, color="k", lw=1, ls=":")
+        if not (range_charge is None):
+            ax.set_xlim((range_charge[0], range_charge[1]))
+        ax.set_yscale("log" if blog_ph_charge else "linear")
+        ax.set_xlabel("charge [%.2e C]" % unit_charge)
+        ax.grid(True)
+        if bfit_charge:
+            _, _ = self._fit_hist1d_landau(
+                hists_collection["hist_charge_sig"], ax=ax, bplot=True,
+                apar_fit=apar_fit_charge, upar_fit=upar_fit_charge, spar_fit=spar_fit_charge,
+                plot_color="green",
+            )        
+            ax.legend()
+        
+        fig.suptitle(figtitle)
+        fig.tight_layout()
+        
+        if bsave:
+            fig.savefig(outname, dpi=self.__outfig_dpi)
+        
+    # plot trends (over the event nr.) of the global distributions, with boolean --> create figure
+    def plot_distribution_trends(
+        self,
+        channel,  # (waveform) variable to plot among the loaded one, string
+        range_time_sig,  # time interval in which to get signal, 2-entry array
+        range_time_bkg,  # time interval in which to get pedestal, 2-entry array
+        boolean = True,  # boolean to be applied to the dataset
+        time_var = "peak_time",  # time variable to use, string
+        range_ph = None,  # range for PH distributions, 2-entry array or None
+        range_time = None,  # range for time distributions, 2-entry array or None
+        range_charge = None,  # range for charge distributions, 2-entry array or None
+        bins_ph = None,  # binning for PH distributions, like in hist. functions
+        bins_time = None,  # binning for time distributions, like in hist. functions
+        bins_charge = None,  # binning for charge distributions, like in hist. functions
+        bins_nev = None,  # binning for event nr. distributions, like in hist. functions
+        hists_collection = None,  # a hists_collection can be directly fed in this method*
+        figsize = (14, 9),  # figure size, 2-entry array
+        blog = False,  # boolean: if True, toggle z log scale
+        figtitle = "",  # string with the figure title
+        bsave = False,  # boolean: if True (False), (don't) save the figure
+        outname  = "./out.jpg",  # path and name of the figure output file, string
+    ):
+        # * hists_collection is can be created elsewhere with analyse_main_distributions;
+        #   note that some of the other arguments are overwritten
+        
+        dataset_temp = self.dataset.cut_copy(boolean)
+        unit_ph = self.dictWfParams[channel]["unit_y"]
+        unit_time = self.dictWfParams[channel]["unit_x"]
+        unit_charge = unit_ph * unit_time
+        
+        bins_time, range_time = self._tweak_bins_range(
+            dataset_temp.data["%s_out_%s"%(channel, time_var)], bins_time, range_time
+        )
+        bins_ph, range_ph = self._tweak_bins_range(
+            dataset_temp.data["%s_out_ph"%(channel)], bins_ph, range_ph
+        )
+        bins_charge, range_charge = self._tweak_bins_range(
+            dataset_temp.data["%s_out_charge"%(channel)], bins_charge, range_charge
+        )
+        bins_nev, _ = self._tweak_bins_range(
+            dataset_temp.data["index"], bins_nev, 0
+        )
+        
+        if hists_collection is None:
+            hists_collection = self.analyse_main_distributions(
+                channel=channel, boolean=boolean,
+                range_time_sig=range_time_sig, range_time_bkg=range_time_bkg, time_var=time_var, 
+                range_ph=range_ph, range_time=range_time, range_charge=range_charge,  
+                bins_ph=bins_ph, bins_time=bins_time, bins_charge=bins_charge, bins_nev=bins_nev
+            )
+
+        fig, axs = plt.subplots(figsize=figsize, nrows=2, ncols=2)
+    
+        ax = axs[0, 0]
+        ax.grid(True)
+        self._draw_hist2d(hists_collection["hist2d_nev_%s"%(time_var)], ax, blog=blog)
+        ax.set_ylabel("time [%.2e s]" % unit_time)
+
+        ax = axs[0, 1]
+        ax.grid(True)
+        self._draw_hist2d(hists_collection["hist2d_nev_base_mean"], ax, blog=blog)
+        ax.set_ylabel("baseline [%.2e V]" % unit_ph)
+
+        ax = axs[1, 0]
+        ax.grid(True)
+        self._draw_hist2d(hists_collection["hist2d_nev_ph"], ax, blog=blog)
+        ax.set_ylabel("PH [%.2e V]" % unit_ph)
+
+        ax = axs[1, 1]
+        ax.grid(True)
+        self._draw_hist2d(hists_collection["hist2d_nev_charge"], ax, blog=blog)
+        ax.set_ylabel("charge [%.2e C]" % unit_charge)
+
+        fig.supxlabel("event nr.")
+
+        fig.suptitle(figtitle)
+        fig.tight_layout()
+
+        if bsave:
+            fig.savefig(outname, dpi=self.__outfig_dpi)        

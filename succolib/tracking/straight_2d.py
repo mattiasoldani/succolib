@@ -33,9 +33,9 @@ def zAngle(
 class cTrack:
     def __init__(
         self,
-        x0,  # 2-dim. array
-        y0,  # 2-dim. array
-        z,  # 2-dim. array
+        x0,  # length 2 array
+        y0,  # length 2 array
+        z,  # length 2 array
         mirrorX = [False, False],
         mirrorY = [False, False],
         shiftMirrorX = [0, 0],
