@@ -1,4 +1,5 @@
 import numpy as np
+from random import randint
 
 ########################################################################################################################
 
@@ -12,7 +13,7 @@ class cWaveForm:
         bPositive,  # polarity, boolean
         samplingRate = 1,
         nbit = 12,
-        range_vpp = 4096,
+        rangeVpp = 4096,
         unitX = 1,
         unitY = 1,
         resistor = 50,
@@ -29,7 +30,7 @@ class cWaveForm:
         
         self.bPositive = bPositive
         self.nbit = nbit
-        self.range_vpp = range_vpp
+        self.rangeVpp = rangeVpp
         self.unitY = unitY
         
         self.resistor = resistor
@@ -58,7 +59,7 @@ class cWaveForm:
         
     # turn the ADCs into physical voltage
     def calibrate_y(self):
-        self.y = self.y0 * self.range_vpp / (2**int(self.nbit) * self.unitY)
+        self.y = self.y0 * self.rangeVpp / (2**int(self.nbit) * self.unitY)
         
     # if a wf is originally negative, it is turned positive
     def make_positive(self):

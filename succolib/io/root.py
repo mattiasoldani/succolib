@@ -75,9 +75,10 @@ def rootToAkMultiEssential(
         fileIndex,
         treeName = "t",
         varlist = [],
-        chunksize=100,
+        chunksize = 100,
         fileIndexName = "iIndex",
         descFrac = {},
+        nEvMax = int(1e10),
         bVerbose = False,
 ):
 
@@ -111,9 +112,13 @@ def rootToAkMultiEssential(
                 print("%s also added to df" % fileIndexName)
             if not (fileIndexName in dfTemp.fields):
                 dfTemp[fileIndexName] = str(iIndex)
-            # iIndex of type string not supported in awkward arrays
 
         df = ak.concatenate((df, dfTemp))
+        if len(df)>nEvMax:
+            df = df[:nEvMax]
+            if bVerbose:
+                print("event nr. reached nEvMax=%d, breaking" % nEvMax)
+            break
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
     return df, dt

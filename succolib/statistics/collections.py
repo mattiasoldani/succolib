@@ -2,14 +2,17 @@ from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
-
-from ..succolib import fLandau, fGaus, cTrack, cWaveForm
+import awkward as ak
+from copy import deepcopy
 
 ########################################################################################################################
 
 class cCollection:
     # note: this is just a dependency for actual event collections
     def __init__(self):
+        sl = __import__(__name__)
+        self.fGaus = getattr(sl, "fGaus")
+        self.fLandau = getattr(sl, "fLandau")
         pass
     
     # tool to turn a (M*N)-dimensional array into (N*M), protected
@@ -135,7 +138,7 @@ class cCollection:
         apar_fit=None, upar_fit=None, spar_fit=None,
         plot_color="red",
     ):
-        fit_func = fLandau
+        fit_func = self.fLandau
         fit_par0 = (
             max(hist[1]) if apar_fit is None else apar_fit,
             hist[0][hist[1]==max(hist[1])][0] if upar_fit is None else upar_fit,
@@ -179,7 +182,7 @@ class cCollection:
         apar_fit=None, upar_fit=None, spar_fit=None,
         plot_color="red",
     ):
-        fit_func = fGaus
+        fit_func = self.fGaus
         fit_par0 = (
             max(hist[1]) if apar_fit is None else apar_fit,
             hist[0][hist[1]==max(hist[1])][0] if upar_fit is None else upar_fit,
@@ -244,6 +247,9 @@ class cTracksCollection(cCollection):
         outtype = "x4",
     ):
         super().__init__()
+
+        sl = __import__(__name__)
+        self.cTrack = getattr(sl, "cTrack")
         
         # attributes set via input:
         
@@ -440,7 +446,7 @@ class cTracksCollection(cCollection):
             if self.bVerbose:
                 if iev_data%1000==0: print("doing event #%d" % (iev_data))
 
-            track_temp = cTrack(
+            track_temp = self.cTrack(
                 self.x0[iev_data], self.y0[iev_data],
                 **self.dictTrackParams, dictProjections=self.dictProjections
             )
@@ -747,6 +753,9 @@ class cWaveFormsCollection(cCollection):
         bOutWfs = False,
     ):
         super().__init__()
+
+        sl = __import__(__name__)
+        self.cWaveForm = getattr(sl, "cWaveForm")
         
         # attributes set via input:
         
@@ -786,7 +795,7 @@ class cWaveFormsCollection(cCollection):
                     if self.bVerbose:
                         if iev_data%1000==0: print("doing channel %s, event #%d" % (sch, iev_data))
 
-                    wf_temp = cWaveForm(
+                    wf_temp = self.cWaveForm(
                         y0 = ev_data[sch], **self.dictWfParams[sch]
                     )
                     wf_temp.full_analysis()
@@ -940,10 +949,10 @@ class cWaveFormsCollection(cCollection):
     ):
         
         dataset_temp = self.dataset.cut_copy(boolean)
-        x0_base_range = self.dictWfParams[channel]["x0_base_range"]
-        unit_x = self.dictWfParams[channel]["unit_x"]
-        unit_y = self.dictWfParams[channel]["unit_y"]
-        sign_base = 1 if self.dictWfParams[channel]["positive"] else -1
+        x0_base_range = self.dictWfParams[channel]["x0BaseRange"]
+        unit_x = self.dictWfParams[channel]["unitX"]
+        unit_y = self.dictWfParams[channel]["unitY"]
+        sign_base = 1 if self.dictWfParams[channel]["bPositive"] else -1
         
         plot_lims = np.array(plot_lims, dtype=object)
         
@@ -1012,10 +1021,10 @@ class cWaveFormsCollection(cCollection):
     ):
         
         dataset_temp = self.dataset.cut_copy(boolean)
-        x0_base_range = self.dictWfParams[channel]["x0_base_range"]
-        unit_x = self.dictWfParams[channel]["unit_x"]
-        unit_y = self.dictWfParams[channel]["unit_y"]
-        sign_base = 1 if self.dictWfParams[channel]["positive"] else -1
+        x0_base_range = self.dictWfParams[channel]["x0BaseRange"]
+        unit_x = self.dictWfParams[channel]["unitX"]
+        unit_y = self.dictWfParams[channel]["unitY"]
+        sign_base = 1 if self.dictWfParams[channel]["bPositive"] else -1
         
         plot_lims = np.array(plot_lims, dtype=object)
         _, plot_lims[0] = self._tweak_bins_range(
@@ -1109,9 +1118,9 @@ class cWaveFormsCollection(cCollection):
         #   note that some of the other arguments are overwritten
         
         dataset_temp = self.dataset.cut_copy(boolean)
-        x0_base_range = self.dictWfParams[channel]["x0_base_range"]
-        unit_ph = self.dictWfParams[channel]["unit_y"]
-        unit_time = self.dictWfParams[channel]["unit_x"]
+        x0_base_range = self.dictWfParams[channel]["x0BaseRange"]
+        unit_ph = self.dictWfParams[channel]["unitY"]
+        unit_time = self.dictWfParams[channel]["unitX"]
         unit_charge = unit_ph * unit_time
         
         bins_time, range_time = self._tweak_bins_range(
@@ -1243,8 +1252,8 @@ class cWaveFormsCollection(cCollection):
         #   note that some of the other arguments are overwritten
         
         dataset_temp = self.dataset.cut_copy(boolean)
-        unit_ph = self.dictWfParams[channel]["unit_y"]
-        unit_time = self.dictWfParams[channel]["unit_x"]
+        unit_ph = self.dictWfParams[channel]["unitY"]
+        unit_time = self.dictWfParams[channel]["unitX"]
         unit_charge = unit_ph * unit_time
         
         bins_time, range_time = self._tweak_bins_range(
