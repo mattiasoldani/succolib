@@ -2,36 +2,47 @@ import awkward as ak
 import numpy as np
 from copy import deepcopy
 
-from .root import rootToAkMultiEssential
+from .root import rootToAkMulti, asciiToAkMulti
 
 ########################################################################################################################
 
 class cAkDataset:
     def __init__(
         self,
+        dataType,
         nameFormat,
         fileIndex,
         treeName = "t",
         varlist = [],
+        treeMap = {},
+        asciiMap = [],
         chunksize = 100,
+        nLinesEv = 1,
         fileIndexName = "iIndex",
         descFrac = {},
         nEvMax = int(1e10),
         bVerbose = False,
+        bProgress = False,
     ):
         
         # attributes set via input:
 
+        self.dataType = dataType
         self.nameFormat = nameFormat
         self.fileIndex = fileIndex
         
         self.treeName = treeName
         self.varlist = varlist
+        self.treeMap = treeMap
+        self.treeMap = treeMap
+        self.asciiMap = asciiMap
         self.chunksize = int(chunksize)
+        self.nLinesEv = nLinesEv
         self.fileIndexName = fileIndexName
         self.descFrac = descFrac
         self.nEvMax = int(nEvMax)
         self.bVerbose = bVerbose
+        self.bProgress = bProgress
 
         # calculated attributes:
 
@@ -51,11 +62,18 @@ class cAkDataset:
     # open data --> return the instance
     def open(self):
         
-        self.data, self.loadtime = rootToAkMultiEssential(
-            self.nameFormat, self.fileIndex, self.treeName, self.varlist,
-            self.chunksize, self.fileIndexName, self.descFrac, self.nEvMax,
-            self.bVerbose
-        )
+        if dataType == "ROOT":
+            self.data, self.loadtime = rootToAkMulti(
+                self.nameFormat, self.fileIndex, self.treeName, self.varlist, self.treeMap,
+                self.chunksize, self.fileIndexName, self.descFrac, self.nEvMax,
+                self.bVerbose, self.bProgress
+            )
+        elif dataType == "ASCII":
+            self.data, self.loadtime = asciiToAkMulti(
+                self.nameFormat, self.fileIndex, self.asciiMap,
+                self.nLinesEv, self.fileIndexName, self.descFrac, self.nEvMax,
+                self.bVerbose, self.bProgress
+            )
                 
         self.__compute_size()
         self.add_vars({"index" : ak.Array(range(self.nevs))})

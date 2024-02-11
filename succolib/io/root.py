@@ -5,7 +5,7 @@ import time
 import glob
 from tqdm.auto import tqdm
 
-from .misc import dfReshape, dfMirror
+from .misc import dfReshape, dfMirror, akReshape, akMirror
 
 ########################################################################################################################
 
@@ -70,16 +70,18 @@ def rootToDfMulti(
     
 ########################################################################################################################
 
-def rootToAkMultiEssential(
+def rootToAkMulti(
         nameFormat,
         fileIndex,
         treeName = "t",
         varlist = [],
+        treeMap = {},
         chunksize = 100,
         fileIndexName = "iIndex",
         descFrac = {},
         nEvMax = int(1e10),
         bVerbose = False,
+        bProgress = False,
 ):
 
     t0 = time.time()  # chronometer start
@@ -93,18 +95,32 @@ def rootToAkMultiEssential(
         
         dfTemp = ak.Array([])
         if bVerbose:
-            print("(%d/%d) %s -- descaling fraction: %14.12f" % (i + 1, len(fileIndex), iIndex, descFrac[iIndex]))        
-        for ichunk, chunk in enumerate(uproot.iterate(dictFiles,
+            print("(%d/%d) %s -- descaling fraction: %14.12f" % (i + 1, len(fileIndex), iIndex, descFrac[iIndex]))    
+        uprootChain = enumerate(uproot.iterate(dictFiles,
             expressions=varlist, step_size=chunksize, allow_missing=True,
-        )):  # tqdm progress bar not supported in essential function
+        ))
+        for ichunk, chunk in tqdm(uprootChain) if (bVerbose & bProgress) else uprootChain:
             if ichunk==0:
                 dfTemp = chunk[0:int(len(chunk) * descFrac[iIndex])]
             else:
                 dfTemp = ak.concatenate((dfTemp, chunk[0:int(len(chunk) * descFrac[iIndex])]))
 
-        # data name reshaping not supported in essential function
+        # data reshaping: removing the square brackets in the names & remapping all the names according to treeMap
+        if len(treeMap)>0:
+            if bVerbose:
+                print("remapping some ROOT tree variables (from tree map given)")
+            if len(dfTemp) > 0:
+                dfTemp = akReshape(dfTemp, treeMap, True)
 
-        # data mirroring not supported in essential function
+        # data mirroring according to mirrorMap, which differs from iLayer to iLayer
+        if iIndex in mirrorMap:
+            if bVerbose:
+                print("mirroring (from mirror map given) "+str(mirrorMap[iIndex]))
+            if dfTemp.shape[0] > 0:
+                dfTemp = akMirror(dfTemp, mirrorMap[iIndex])
+        else:
+            if bVerbose:
+                print("no variables to mirror")
 
         # fileIndexName column creation (if requested & not already existing -- after the data reshaping)
         if len(fileIndexName)>0:
@@ -112,6 +128,9 @@ def rootToAkMultiEssential(
                 print("%s also added to df" % fileIndexName)
             if not (fileIndexName in dfTemp.fields):
                 dfTemp[fileIndexName] = str(iIndex)
+            else:
+                akTemp = ak.to_list(dfTemp[fileIndexName])
+                dfTemp[fileIndexName] = ak.Array([str(ind) for ind in akTemp])
 
         df = ak.concatenate((df, dfTemp))
         if len(df)>nEvMax:
