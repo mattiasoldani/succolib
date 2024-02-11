@@ -135,7 +135,7 @@ dmypy.json
 .idea/
 
 # my files
-21_devel.py
-24_devel
+*devel
+*devel*
 draftRef.txt
 test_plots/*
