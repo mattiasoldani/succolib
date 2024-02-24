@@ -9,8 +9,8 @@ class cWaveForm:
     def __init__(
         self,
         y0,
-        x0BaseRange,  # length 2 array
-        bPositive,  # polarity, boolean
+        x0BaseRange,
+        bPositive,
         samplingRate = 1,
         nbit = 12,
         rangeVpp = 4096,
