@@ -311,6 +311,10 @@ The event array is stored in the `data` attribute. Other class attributes store 
 
 ##### Waveforms
 
+Coming soon!
+
 ##### Collections
+
+Coming soon!
 
 ##### 
