@@ -3,6 +3,7 @@ import glob
 import pandas as pd
 import os
 import time
+import awkward as ak
 from tqdm.auto import tqdm
 
 from .misc import dfMirror, akMirror
@@ -159,7 +160,7 @@ def asciiToAkMulti(
             descFrac.update({iIndex: 1})  # all the undefined descaling factors are trivially set to 1
         if bVerbose:
             print("(%d/%d) %s -- descaling fraction: %14.12f" % (i+1, len(fileIndex), iIndex, descFrac[iIndex]))
-        dfTemp, _ = asciiToAkEssential(nameFormat.replace("XXXXXX", iIndex), asciiMap, nLinesEv, descFrac[iIndex], nEvMax, bVerbose=bVerbose, bProgress=bProgress)
+        dfTemp, _ = asciiToAk(nameFormat.replace("XXXXXX", iIndex), asciiMap, nLinesEv, descFrac[iIndex], nEvMax, bVerbose=bVerbose, bProgress=bProgress)
         
         # data mirroring according to mirrorMap, which differs from iLayer to iLayer
         if iIndex in mirrorMap:
