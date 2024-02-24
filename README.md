@@ -133,17 +133,11 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 Many frequently used functions are provided in a highly accessible form, such as:
 * the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as
 
-<p align="center">
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].">
-</p>
-
-$$f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].$$
+$$f(x) = A \exp \big[ {{-(x - u)^2} \over {2 \sigma^2}} \big].$$
 
 * The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively; it is defined as
 
-<p align="center">    
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
-</p>
+$$f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} + {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.$$
 
 <p align="center">
     <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
@@ -151,15 +145,11 @@ $$f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].$$
 
 * The approximate half-width of the multiple Coulomb scattering (MCS) angular distribution &mdash; `fMCS(E, x, X0, z, bLogTerm)`, where `E` is the projectile energy in GeV, `x` is the thickness of the crossed medium, `X0` (optional, 1 by default) is the medium radiation length, `z` (optional, 1 by default) is the projectile charge in units of electron charge and `bLogTerm` (optional, `True` by default) is a boolean determining whether to include the logarithmic term in the formula below. Note that, to compute the MCS contribution using the medium thickness in units of radiation length directly, it is sufficient to leave `X0 = 1`.
 
-<p align="center">    
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = {13.6 \mathrm{MeV}} \over E z \big( x \over {X_0} \big)^{1 \over 2} \big[1 %2B 0.038 \mathrm{ln}\big( x \over {X_0} \big) \big].">
-</p>
+$$f(x) = {{13.6 \mathrm{MeV}} \over E z} \big( {x \over {X_0}} \big)^{1 / 2} \big[1 + 0.038 \mathrm{ln}\big( {x \over {X_0}} \big) \big].$$
 
 * The absorption/conversion probability for a high-energy photon crossing a medium &mdash; `fGammaAbsExp(x, X0)`, where `x` is the thickness of the crossed medium and `X0` (optional, 1 by default) is the medium radiation length. Note that, to compute the probability using the medium thickness in units of radiation length directly, it is sufficient to leave `X0 = 1`.
 
-<p align="center">    
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = 1 - \exp \big( x \over {X_0} \big) ">
-</p>
+$$f(x) = 1 - \exp \big( {x \over {X_0}} \big).$$
 
 ##### Profile plot (compatible with [matplotlib](https://matplotlib.org/))
 
