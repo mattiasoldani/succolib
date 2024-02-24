@@ -5,19 +5,16 @@
 This is **succolib**, a library of handy Python functions for High-Energy Physics beamtests data analysis. In particular, it has been developed with a focus on the event-by-event analysis of the data collected with the INSULAb detectors &mdash; see, for example, the experimental configurations described [here](http://cds.cern.ch/record/2672249), [here](https://drive.google.com/file/d/1w_P8LQVJ1eL3zyOfR4Vrj7hdDUFoZ81M/view) and [here](http://cds.cern.ch/record/1353904).
 
 succolib provides several tools, mainly for
-* **data input** and storage in pandas DataFrames &mdash; supported input formats are formatted text files (e.g. DAT files), Numpy compressed array files (i.e. NPZ files) and ROOT tree files;
+* **data input** and storage in pandas DataFrames or Awkward Arrays &mdash; supported input formats are formatted text files (e.g. DAT files), ROOT tree files and Numpy compressed array files (i.e. NPZ files, pandas DataFrames only);
 * **data conditioning**, i.e. typical transformations applied to and calculations performed on the raw data &mdash; e.g. particle tracking data reconstruction;
 * **statistical analysis**, e.g. common distributions in High-Energy Physics, given in a highly accessible form to facilitate data analysis, visualisation and fitting.
 
 Install succolib, along with all its dependencies, via `pip install succolib`.
 
 Dependencies:
-
-[![numpy](https://img.shields.io/badge/numpy-grey.svg)](https://numpy.org/) [![pandas](https://img.shields.io/badge/pandas-grey.svg)](https://pandas.pydata.org/) [![tqdm](https://img.shields.io/badge/tqdm-grey.svg)](https://github.com/tqdm/tqdm) [![uproot](https://img.shields.io/badge/uproot->=4-blue.svg)](https://github.com/scikit-hep/uproot)
+[![awkward](https://img.shields.io/badge/awkward-grey.svg)](https://awkward-array.org/) [![matplotlib](https://img.shields.io/badge/matplotlib-grey.svg)](https://matplotlib.org/) [![numpy](https://img.shields.io/badge/numpy-grey.svg)](https://numpy.org/) [![pandas](https://img.shields.io/badge/pandas-grey.svg)](https://pandas.pydata.org/) [![scipy](https://img.shields.io/badge/scipy-grey.svg)](https://www.scipy.org/) [![tqdm](https://img.shields.io/badge/tqdm-grey.svg)](https://github.com/tqdm/tqdm) [![uproot](https://img.shields.io/badge/uproot->=4-blue.svg)](https://github.com/scikit-hep/uproot)
 
 Note: [ROOT](https://root.cern.ch/) itself is not required.
-
-An extensive use of the succolib tools is made in the [anaKrys](https://github.com/mattiasoldani/anaKrys) project &mdash; give it a look!
 
 Found a bug? Or simply have any questions, comments or suggestions you'd like to talk about? Feel free to contact me at <mattiasoldani93@gmail.com>. And brace yourself, for the best is yet to come!
 
@@ -136,15 +133,11 @@ All the arguments can be either scalars or [numpy.array](https://numpy.org/doc/s
 Many frequently used functions are provided in a highly accessible form, such as:
 * the Gaussian distribution `fGaus(x, A, u, sigma)`, defined as
 
-<p align="center">
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big[ {-(x - u)^2} \over {2 \sigma^2} \big].">
-</p>
+$$f(x) = A \exp \big[ {{-(x - u)^2} \over {2 \sigma^2}} \big].$$
 
 * The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively; it is defined as
 
-<p align="center">    
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} %2B {\exp\big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big)} \big] \big\}.">
-</p>
+$$f(x) = A \exp \big\lbrace - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} + {\exp \big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big) } \big] \big\rbrace.$$
 
 <p align="center">
     <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
@@ -152,15 +145,11 @@ Many frequently used functions are provided in a highly accessible form, such as
 
 * The approximate half-width of the multiple Coulomb scattering (MCS) angular distribution &mdash; `fMCS(E, x, X0, z, bLogTerm)`, where `E` is the projectile energy in GeV, `x` is the thickness of the crossed medium, `X0` (optional, 1 by default) is the medium radiation length, `z` (optional, 1 by default) is the projectile charge in units of electron charge and `bLogTerm` (optional, `True` by default) is a boolean determining whether to include the logarithmic term in the formula below. Note that, to compute the MCS contribution using the medium thickness in units of radiation length directly, it is sufficient to leave `X0 = 1`.
 
-<p align="center">    
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = {13.6 \mathrm{MeV}} \over E z \big( x \over {X_0} \big)^{1 \over 2} \big[1 %2B 0.038 \mathrm{ln}\big( x \over {X_0} \big) \big].">
-</p>
+$$f(x) = {{13.6 \mathrm{MeV}} \over E z} \big( {x \over {X_0}} \big)^{1 / 2} \big[1 + 0.038 \mathrm{ln}\big( {x \over {X_0}} \big) \big].$$
 
 * The absorption/conversion probability for a high-energy photon crossing a medium &mdash; `fGammaAbsExp(x, X0)`, where `x` is the thickness of the crossed medium and `X0` (optional, 1 by default) is the medium radiation length. Note that, to compute the probability using the medium thickness in units of radiation length directly, it is sufficient to leave `X0 = 1`.
 
-<p align="center">    
-    <img src="https://render.githubusercontent.com/render/math?math=\large f(x) = 1 - \exp \big( x \over {X_0} \big) ">
-</p>
+$$f(x) = 1 - \exp \big( {x \over {X_0}} \big).$$
 
 ##### Profile plot (compatible with [matplotlib](https://matplotlib.org/))
 
@@ -246,3 +235,78 @@ are shown in the figure below.
 <p align="center">
     <img src="./readme_pics/test_plots_eventSmear.png" alt="readme_pics/test_plots_eventSmearing.png" width="700" height="525">
 </p>
+
+---
+
+### Winter 2024 major update: Awkward Arrays, datasets, waveform analysis, new aggregate tools
+
+##### Awkward Arrays
+
+The new input functions
+```python
+asciiToAkMulti(
+    nameFormat,
+    fileIndex,
+    asciiMap,
+    nLinesEv = 1,
+    fileIndexName = "iIndex",
+    descFrac = {},
+    nEvMax = int(1e10),
+    mirrorMap = {},
+    bVerbose = False,
+    bProgress = False,
+)
+```
+and
+```python
+rootToAkMulti(
+    nameFormat,
+    fileIndex,
+    treeName = "t",
+    varlist = [],
+    treeMap = {},
+    chunksize = 100,
+    fileIndexName = "iIndex",
+    descFrac = {},
+    nEvMax = int(1e10),
+    mirrorMap = {},
+    bVerbose = False,
+    bProgress = False,
+)
+```
+allow the content of formatted text files and ROOT tree files to be stored in [Awkward Arrays](https://awkward-array.org/). Most of the arguments are identical to those of the other input functions, as well as the function output. `varlist` is a list of names of the branches to be retrieved from the ROOT trees. `nEvMax` is the maximum number of events to be read, after which the file opening procedure is interrupted.
+
+##### Datasets
+
+The class
+```python
+cAkDataset(
+    dataType,
+    nameFormat,
+    fileIndex,
+    treeName = "t",
+    varlist = [],
+    treeMap = {},
+    asciiMap = [],
+    chunksize = 100,
+    nLinesEv = 1,
+    fileIndexName = "iIndex",
+    descFrac = {},
+    nEvMax = int(1e10),
+    bVerbose = False,
+    bProgress = False,
+)
+```
+is a practical container in which the data from input files can be stored as Awkward Arrays, together with some metadata. The input file type is selected by setting `varlist = "ASCII"` (`"ROOT"`) for formatted text files (ROOT tree files). All the other arguments are the same as in the input functions. Depending on the input file type, some of the arguments might be unused.
+
+The event array is stored in the `data` attribute. Other class attributes store some contextual information on the dataset. Once instantiated, the (empty) `cAkDataset` object is filled with the requested data using the `open()` method. Methods are also available to add new variables to the dataset (`add_vars(dict_vars)`) and to apply cuts to (a copy of) it (`cut_copy(condition)`) modifying the dataset metadata accordingly. Details on the behaviour of the class attributes and methods can be found in comments to the source code.
+
+##### Waveforms
+
+Coming soon!
+
+##### Collections
+
+Coming soon!
+
+##### 
