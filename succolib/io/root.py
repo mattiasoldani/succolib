@@ -80,6 +80,7 @@ def rootToAkMulti(
         fileIndexName = "iIndex",
         descFrac = {},
         nEvMax = int(1e10),
+        mirrorMap = {},
         bVerbose = False,
         bProgress = False,
 ):
