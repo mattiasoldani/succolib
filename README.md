@@ -137,7 +137,7 @@ $$f(x) = A \exp \big[ {{-(x - u)^2} \over {2 \sigma^2}} \big].$$
 
 * The Moyal approximation of the Landau distribution, given in both the original and mirrored (*x*&ndash;mpv &rarr; mpv&ndash;*x*) versions &mdash; `fLandau(x, A, mpv, width)` and `fLandauMirror(x, A, mpv, width)` respectively; it is defined as
 
-$$f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} + {\exp \big( {{x - \mathrm{mpv}} \over \mathrm{width}} \big) } \big] \big\}.$$
+$$f(x) = A \exp \big\{ - {1 \over 2} \big[ {{x - \mathrm{mpv}} \over \mathrm{width}} + {\exp \big( {x - \mathrm{mpv}} / \mathrm{width} \big) } \big] \big\}.$$
 
 <p align="center">
     <img src="./readme_pics/test_plots_statDistros.png" alt="readme_pics/test_plots_statDistros.png" width="500" height="375">
