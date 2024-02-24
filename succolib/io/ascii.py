@@ -127,7 +127,7 @@ def asciiToAk(
                 fileToStringSplitted = fileToString.splitlines()
                 dataTableTemp = np.loadtxt(fileToStringSplitted)
             dfTemp = ak.Array(dict(zip(asciiMap, np.array(dataTableTemp).T)))
-            df = df.append(dfTemp[0:int(len(dfTemp) * descFrac[iIndex])])
+            df = df.append(dfTemp[0:int(len(dfTemp) * descFrac)])
             df = akMirror(df, mirrorMap)
             if len(df)>nEvMax:
                 df = df[:nEvMax]
