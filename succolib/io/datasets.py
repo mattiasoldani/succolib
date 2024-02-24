@@ -9,7 +9,7 @@ from .root import rootToAkMulti, asciiToAkMulti
 class cAkDataset:
     def __init__(
         self,
-        dataType,
+        dataType,  # string, "ASCII" or "ROOT" are currently supported
         nameFormat,
         fileIndex,
         treeName = "t",
@@ -62,13 +62,13 @@ class cAkDataset:
     # open data --> return the instance
     def open(self):
         
-        if dataType == "ROOT":
+        if self.dataType == "ROOT":
             self.data, self.loadtime = rootToAkMulti(
                 self.nameFormat, self.fileIndex, self.treeName, self.varlist, self.treeMap,
                 self.chunksize, self.fileIndexName, self.descFrac, self.nEvMax,
                 self.bVerbose, self.bProgress
             )
-        elif dataType == "ASCII":
+        elif self.dataType == "ASCII":
             self.data, self.loadtime = asciiToAkMulti(
                 self.nameFormat, self.fileIndex, self.asciiMap,
                 self.nLinesEv, self.fileIndexName, self.descFrac, self.nEvMax,
