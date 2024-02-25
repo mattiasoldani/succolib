@@ -251,7 +251,7 @@ asciiToAkMulti(
     nLinesEv = 1,
     fileIndexName = "iIndex",
     descFrac = {},
-    nEvMax = int(1e10),
+    nEvMax = 10000000000,
     mirrorMap = {},
     bVerbose = False,
     bProgress = False,
@@ -268,7 +268,7 @@ rootToAkMulti(
     chunksize = 100,
     fileIndexName = "iIndex",
     descFrac = {},
-    nEvMax = int(1e10),
+    nEvMax = 10000000000,
     mirrorMap = {},
     bVerbose = False,
     bProgress = False,
@@ -292,7 +292,7 @@ cAkDataset(
     nLinesEv = 1,
     fileIndexName = "iIndex",
     descFrac = {},
-    nEvMax = int(1e10),
+    nEvMax = 10000000000,
     bVerbose = False,
     bProgress = False,
 )
@@ -304,7 +304,7 @@ The event array is stored in the `data` attribute. Other class attributes store 
 ##### Waveforms
 
 Some basic tools for digital waveform analysis have been implemented. Everything is managed with the class
-```pyt
+```python
 cWaveForm(
     y0,
     x0BaseRange,
@@ -333,10 +333,34 @@ The analysed wavefunction is stored in the `x` and `y` attributes. The analysis 
 * subtracting the raw signal baseline, with the `subtract_base()` method;
 * computing some base quantities, i.e., the pulse height (stored in the `ph` attribute), the peaking time (in the `peak_time` attribute), the signal charge (in the `charge` attribute) and the signal-noise ratio (in the `snr` attribute), with the `analyse()` method.
 
-The `full_analysis()` method performs all the aforementioned operations at once.
+The `full_analysis()` method performs all the aforementioned operations at the same time.
 
 ##### Collections
 
-Coming soon!
+Collections of events are introduced, which allow to process sets of events and output aggregate information. They are coupled to dataset objects. They can be used to compute distributions, apply global corrections based on the aggregate information to the data (e.g. tracking system alignment) and plot histograms with Matplotlib.
 
-##### 
+The class
+```python
+cTracksCollection(
+    dataset,
+    x0,
+    y0,
+    dictTrackParams,
+    dictProjections = {},
+    bVerbose = False,
+    outtype = "x4",
+)
+```
+[...]
+
+The class
+```python
+cWaveFormsCollection(
+    dataset,
+    varlist,
+    dictWfParams,
+    bVerbose = False,
+    bOutWfs = False,
+)
+```
+[...]
