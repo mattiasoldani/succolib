@@ -251,7 +251,7 @@ asciiToAkMulti(
     nLinesEv = 1,
     fileIndexName = "iIndex",
     descFrac = {},
-    nEvMax = int(1e10),
+    nEvMax = 10000000000,
     mirrorMap = {},
     bVerbose = False,
     bProgress = False,
@@ -268,7 +268,7 @@ rootToAkMulti(
     chunksize = 100,
     fileIndexName = "iIndex",
     descFrac = {},
-    nEvMax = int(1e10),
+    nEvMax = 10000000000,
     mirrorMap = {},
     bVerbose = False,
     bProgress = False,
@@ -292,7 +292,7 @@ cAkDataset(
     nLinesEv = 1,
     fileIndexName = "iIndex",
     descFrac = {},
-    nEvMax = int(1e10),
+    nEvMax = 10000000000,
     bVerbose = False,
     bProgress = False,
 )
@@ -303,10 +303,64 @@ The event array is stored in the `data` attribute. Other class attributes store 
 
 ##### Waveforms
 
-Coming soon!
+Some basic tools for digital waveform analysis have been implemented. Everything is managed with the class
+```python
+cWaveForm(
+    y0,
+    x0BaseRange,
+    bPositive,
+    samplingRate = 1,
+    nbit = 12,
+    rangeVpp = 4096,
+    unitX = 1,
+    unitY = 1,
+    resistor = 50,
+)
+```
+where:
+* `y0` is the array containing the raw waveform samples, in ADC;
+* `x0BaseRange` is a 2-dimensional array with the edges of the sample interval in which to compute the waveform baseline, in sample indices;
+* `bPositive` is a boolean, to be set to `True` (`False`) for positive (negative) signals;
+* `samplingRate` (optional) is the time different between successive samples, in seconds;
+* `nbit` (optional) is the waveform resolution, in number of bits -- the waveform range being defined as `2**nbit`;
+* `rangeVpp` (optional) is the range size, in volts;
+* `unitX` and `unitY` (optional) are the conversion factors for the output waveform time and signal arrays, with respect to seconds and volts respectively -- e.g. set `unitX = 1e-9` and `unitY = 1e-3` for the analysed waveform to be returned in units of mV versus ns;
+* `resistor` (optional) is the impedance value to be used to scale the waveform integral (corresponding to the signal charge), in ohms.
+
+The analysed wavefunction is stored in the `x` and `y` attributes. The analysis consists of
+* calibrating the time (sample number to `unitX`) and signal (ADC to `unitY`) axes, with the `calibrate_x()` and `calibrate_x()` methods;
+* reversing the polarity of negative signals , with the `make_positive()` method;
+* subtracting the raw signal baseline, with the `subtract_base()` method;
+* computing some base quantities, i.e., the pulse height (stored in the `ph` attribute), the peaking time (in the `peak_time` attribute), the signal charge (in the `charge` attribute) and the signal-noise ratio (in the `snr` attribute), with the `analyse()` method.
+
+The `full_analysis()` method performs all the aforementioned operations at the same time.
 
 ##### Collections
 
-Coming soon!
+Collections of events are introduced, which allow to process sets of events and output aggregate information. They are coupled to dataset objects. They can be used to compute distributions, apply global corrections based on the aggregate information to the data (e.g. tracking system alignment) and plot histograms with Matplotlib.
 
-##### 
+The class
+```python
+cTracksCollection(
+    dataset,
+    x0,
+    y0,
+    dictTrackParams,
+    dictProjections = {},
+    bVerbose = False,
+    outtype = "x4",
+)
+```
+[...]
+
+The class
+```python
+cWaveFormsCollection(
+    dataset,
+    varlist,
+    dictWfParams,
+    bVerbose = False,
+    bOutWfs = False,
+)
+```
+[...]
