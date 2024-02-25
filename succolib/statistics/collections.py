@@ -242,7 +242,6 @@ class cTracksCollection(cCollection):
         x0,
         y0,
         dictTrackParams,
-        dictProjections = {},
         bVerbose = False,
         outtype = "x4",
     ):
@@ -258,7 +257,8 @@ class cTracksCollection(cCollection):
         self.y0 = y0
         
         self.dictTrackParams = dictTrackParams
-        self.dictProjections = dictProjections
+        self.dictProjections = \
+            dictTrackParams["dictProjections"] if ("dictTrackParams" in dictTrackParams.keys()) else {}
         
         self.bVerbose = bVerbose
         self.outtype = outtype
@@ -440,15 +440,14 @@ class cTracksCollection(cCollection):
         else:
             return
         
-    # process all the waveforms and add results to the dataset
+    # process all the tracks and add results to the dataset
     def full_calculations_output(self):                    
         for iev_data, ev_data in enumerate(self.dataset.data):
             if self.bVerbose:
                 if iev_data%1000==0: print("doing event #%d" % (iev_data))
 
             track_temp = self.cTrack(
-                self.x0[iev_data], self.y0[iev_data],
-                **self.dictTrackParams, dictProjections=self.dictProjections
+                self.x0[iev_data], self.y0[iev_data], **self.dictTrackParams
             )
             track_temp.full_analysis()
 

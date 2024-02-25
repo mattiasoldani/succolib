@@ -33,16 +33,16 @@ def zAngle(
 class cTrack:
     def __init__(
         self,
-        x0,  # length 2 array
-        y0,  # length 2 array
-        z,  # length 2 array
+        x0,
+        y0,
+        z,
         mirrorX = [False, False],
         mirrorY = [False, False],
         shiftMirrorX = [0, 0],
         shiftMirrorY = [0, 0],
         shiftThX = 0,
         shiftThY = 0,
-        dictProjections = {},  # {position_label : z_value}
+        dictProjections = {},
     ):
         
         # attributes set via input:
