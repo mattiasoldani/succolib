@@ -20,7 +20,7 @@ class cAkDataset:
         nLinesEv = 1,
         fileIndexName = "iIndex",
         descFrac = {},
-        nEvMax = int(1e10),
+        nEvMax = 10000000000,
         bVerbose = False,
         bProgress = False,
     ):

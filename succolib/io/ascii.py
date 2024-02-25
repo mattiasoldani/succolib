@@ -101,7 +101,7 @@ def asciiToAk(
         asciiMap,
         nLinesEv = 1,
         descFrac = 1,
-        nEvMax = int(1e10),
+        nEvMax = 10000000000,
         mirrorMap = (),  # this is a tuple here, but a dictionary in asciiToAkMulti() (i.e. the "main" function)
         bVerbose = False,
         bProgress = False,

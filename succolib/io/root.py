@@ -79,7 +79,7 @@ def rootToAkMulti(
         chunksize = 100,
         fileIndexName = "iIndex",
         descFrac = {},
-        nEvMax = int(1e10),
+        nEvMax = 10000000000,
         mirrorMap = {},
         bVerbose = False,
         bProgress = False,
