@@ -149,7 +149,7 @@ $$f(x) = {{13.6 \mathrm{MeV}} \over E z} \big( {x \over {X_0}} \big)^{1 / 2} \bi
 
 * The absorption/conversion probability for a high-energy photon crossing a medium &mdash; `fGammaAbsExp(x, X0)`, where `x` is the thickness of the crossed medium and `X0` (optional, 1 by default) is the medium radiation length. Note that, to compute the probability using the medium thickness in units of radiation length directly, it is sufficient to leave `X0 = 1`.
 
-$$f(x) = 1 - \exp \big( {x \over {X_0}} \big).$$
+$$f(x) = 1 - \exp \big( -{x \over {X_0}} \big).$$
 
 ##### Profile plot (compatible with [matplotlib](https://matplotlib.org/))
 
@@ -301,6 +301,34 @@ is a practical container in which the data from input files can be stored as Awk
 
 The event array is stored in the `data` attribute. Other class attributes store some contextual information on the dataset. Once instantiated, the (empty) `cAkDataset` object is filled with the requested data using the `open()` method. Methods are also available to add new variables to the dataset (`add_vars(dict_vars)`) and to apply cuts to (a copy of) it (`cut_copy(condition)`) modifying the dataset metadata accordingly. Details on the behaviour of the class attributes and methods can be found in comments to the source code.
 
+##### Improved tracking analysis
+
+The class
+```python
+cTrack(
+    x0,
+    y0,
+    z,
+    mirrorX = [False, False],
+    mirrorY = [False, False],
+    shiftMirrorX = [0, 0],
+    shiftMirrorY = [0, 0],
+    shiftThX = 0,
+    shiftThY = 0,
+    dictProjections = {},
+)
+```
+has been added to ease linear track calculation. Here
+* `x0`, `y0` and `z` are 2-dimensional arrays with the transverse and longitudinal positions of the hits in the two tracking modules involved -- see section on tracking above;
+* `mirrorX` and `mirrorY` (optional) are 2-dimensional arrays of booleans: if the boolean corresponding to a certain module and vista is `True`, the hit coordinates measured there are mirrored;
+* `shiftMirrorX` and `shiftMirrorY` (optional) are 2-dimensional arrays with the shifts to be applied to the mirrored coordinates after mirroring;
+* `shiftThX` and `shiftThY` (optional) are shifts to be applied to the raw track angles to obtain the corresponding centred values;
+* `dictProjections` (optional) is a dictionary containing an arbitrary number of position names (as keys) and corresponding longitudinal positions (as values) at which to compute the track projection.
+
+The fully analysed track hits on the tracking modules are stored in the `x` and `y` attributes (2-dimensional arrays). Similarly, all the projected hits are stored in attributes named `x[NAME]` and `y[NAME]`, where `[NAME]` is the corresponding name in `dictProjections`. The raw (centred) track angles are available in `thx0` and `thy0` (`thx` and `thy`).
+
+The vista mirroring, angle computation, alignment and projections are performed with the `mirror_modules()`, `compute_angles_0()`, `align()` and `compute_all_projections()` methods respectively. ALl the operations can be performed at the same time with the `full_analysis()` method.
+
 ##### Waveforms
 
 Some basic tools for digital waveform analysis have been implemented. Everything is managed with the class
@@ -337,7 +365,12 @@ The `full_analysis()` method performs all the aforementioned operations at the s
 
 ##### Collections
 
-Collections of events are introduced, which allow to process sets of events and output aggregate information. They are coupled to dataset objects. They can be used to compute distributions, apply global corrections based on the aggregate information to the data (e.g. tracking system alignment) and plot histograms with Matplotlib.
+Collections of events are introduced, which allow to process sets of events and output aggregate information. They are coupled to dataset objects. They can be used to compute distributions, apply global corrections based on the aggregate information to the data (e.g. tracking system alignment) and plot histograms with Matplotlib. The built-in collection classes have some features in common:
+* the `dataset` argument contains a dataset in which to store the new variables resulting from the collection calculations and, in some cases, from which to retrieve variables for calculations.
+* The `bVerbose` argument (generally optional) toggles the printout of some of the methods.
+* Some methods that exist in all collections, albeit with different features, are `full_calculations_output()`, to process all the events and store the desired results into `dataset` and  `analyse_main_distributions([...])`, with class-dependent parameters, to create histograms and store them into a dedicated dictionary that is returned.
+
+Moreover, all actual collection classes have a common parent, the `cCollection` class, which can also be used to create custom collections. Check the source code for details.
 
 The class
 ```python
@@ -346,12 +379,18 @@ cTracksCollection(
     x0,
     y0,
     dictTrackParams,
-    dictProjections = {},
     bVerbose = False,
     outtype = "x4",
 )
 ```
-[...]
+deals with the track analysis by applying instances of `cTrack` to each event in the set. Here:
+* `x0` and `y0` are arrays of 2-dimensional arrays, containing the hit positions for each event;
+* `dictTrackParams` contains a dictionary with the parameters of `cTrack` common to all the events -- parameter names (values) as keys (values);
+* `outtype` (optional) determines the way the output tracking spatial and angular data are organised into `dataset`: the accepted values are `x4`, `x2y2` and `x1x1y1y1`.
+
+Note: here `dataset` is only used for the output part, whereas the input part is managed separately with `x0` and `y0`.
+
+The class methods include `full_alignment_output([...])` for the tracking module alignment computed on and then applied to the collection data, `plot_distributions_tracking([...])` to plot the beam profile and angle distributions, `plot_distributions_spot2d([...])` to plot 2-dimensional distributions. Check the source code for details on the method arguments. 
 
 The class
 ```python
@@ -363,4 +402,9 @@ cWaveFormsCollection(
     bOutWfs = False,
 )
 ```
-[...]
+deals with the waveform analysis by applying instances of `cWaveForm` to each event in the set. Here:
+* `varlist` is the list of columns of `dataset` containing the waveforms to process;
+* `dictWfParams` contains a dictionary with the parameters of `cWaveForm` common to all the events -- parameter names (values) as keys (values);
+* `bOutWfs` (optional) determines whether the fully conditioned waveforms (`x` and `y` resulting from `cWaveForm.full_analysis()`) are added to `dataset` alongside all the other waveform analysis output values.
+
+The class methods include `plot_wfs_curves([...])` to plot the waveforms and `plot_distributions_summary([...])` to plot the results of their analysis -- pulse height, peaking time and charge distributions. Check the source code for details on the method arguments. 
