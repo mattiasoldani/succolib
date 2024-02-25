@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = "2021.8.0"
+version = "2024.2.0"
 
 setup(
     author="Mattia Soldani",
@@ -15,8 +15,11 @@ setup(
     packages=find_packages(),
     python_requires=">=3.0",
     install_requires=[
+        "awkward",
+        "matplotlib",
         "numpy",
         "pandas",
+        "scipy",
         "tqdm",
         "uproot>=4.0",
     ],
