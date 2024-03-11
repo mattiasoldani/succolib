@@ -2,7 +2,8 @@ import awkward as ak
 import numpy as np
 from copy import deepcopy
 
-from .root import rootToAkMulti, asciiToAkMulti
+from .root import rootToAkMulti
+from .ascii import asciiToAkMulti
 
 ########################################################################################################################
 
