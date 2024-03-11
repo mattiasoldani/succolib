@@ -22,6 +22,7 @@ class cAkDataset:
         fileIndexName = "iIndex",
         descFrac = {},
         nEvMax = 10000000000,
+        mirrorMap = {},
         bVerbose = False,
         bProgress = False,
     ):
@@ -43,6 +44,7 @@ class cAkDataset:
         self.descFrac = descFrac
         self.nEvMax = int(nEvMax)
         self.bVerbose = bVerbose
+        self.mirrorMap = mirrorMap
         self.bProgress = bProgress
 
         # calculated attributes:
@@ -66,13 +68,13 @@ class cAkDataset:
         if self.dataType == "ROOT":
             self.data, self.loadtime = rootToAkMulti(
                 self.nameFormat, self.fileIndex, self.treeName, self.varlist, self.treeMap,
-                self.chunksize, self.fileIndexName, self.descFrac, self.nEvMax,
+                self.chunksize, self.fileIndexName, self.descFrac, self.nEvMax, self.mirrorMap,
                 self.bVerbose, self.bProgress
             )
         elif self.dataType == "ASCII":
             self.data, self.loadtime = asciiToAkMulti(
                 self.nameFormat, self.fileIndex, self.asciiMap,
-                self.nLinesEv, self.fileIndexName, self.descFrac, self.nEvMax,
+                self.nLinesEv, self.fileIndexName, self.descFrac, self.nEvMax, self.mirrorMap,
                 self.bVerbose, self.bProgress
             )
                 
