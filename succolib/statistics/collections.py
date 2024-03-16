@@ -1176,7 +1176,7 @@ class cWaveFormsCollection(cCollection):
                 range_time_sig=range_time_sig, range_time_bkg=range_time_bkg, time_var=time_var, 
                 range_ph=range_ph, range_time=range_time, range_charge=range_charge,  
                 bins_ph=bins_ph, bins_time=bins_time, bins_charge=bins_charge,
-                b_pede_internal=b_pede_internal, pede_ph=pede_ph, pede_charge=pede_charge, b_pede_subtract,
+                b_pede_internal=b_pede_internal, pede_ph=pede_ph, pede_charge=pede_charge, b_pede_subtract=b_pede_subtract,
             )
 
         fig, axs = plt.subplots(figsize=figsize, nrows=2, ncols=2)
@@ -1317,8 +1317,7 @@ class cWaveFormsCollection(cCollection):
                 range_time_sig=range_time_sig, range_time_bkg=range_time_bkg, time_var=time_var, 
                 range_ph=range_ph, range_time=range_time, range_charge=range_charge,  
                 bins_ph=bins_ph, bins_time=bins_time, bins_charge=bins_charge, bins_nev=bins_nev,
-                b_pede_internal=b_pede_internal, pede_ph=pede_ph, pede_charge=pede_charge, b_pede_subtract,
-
+                b_pede_internal=b_pede_internal, pede_ph=pede_ph, pede_charge=pede_charge, b_pede_subtract=b_pede_subtract,
             )
 
         fig, axs = plt.subplots(figsize=figsize, nrows=2, ncols=2)
