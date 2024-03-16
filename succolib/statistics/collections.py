@@ -1131,6 +1131,10 @@ class cWaveFormsCollection(cCollection):
         bins_time = None,  # binning for time distributions, like in hist. functions
         bins_charge = None,  # binning for charge distributions, like in hist. functions
         hists_collection = None,  # a hists_collection can be directly fed in this method*
+        b_pede_internal = True,  # boolean: if True (False), use same-event off-time (externally computed) pedestal values
+        pede_ph = 0,  # pedestal value to manually shift the signal PH spectra (only used if not b_pede_internal)
+        pede_charge = 0,  # pedestal value to manually shift the signal charge spectra (only used if not b_pede_internal)
+        b_pede_subtract = False,  # boolean: if True, the pedestal population is also subtracted from the signal spectra
         bfit_ph = False,  # boolean: if True, fit the PH signal distribution
         bfit_charge = False,  # boolean: if True, fit the charge signal distribution
         apar_fit_ph = None,  # PH amplitude start parameter (if None, estimated)
@@ -1172,6 +1176,7 @@ class cWaveFormsCollection(cCollection):
                 range_time_sig=range_time_sig, range_time_bkg=range_time_bkg, time_var=time_var, 
                 range_ph=range_ph, range_time=range_time, range_charge=range_charge,  
                 bins_ph=bins_ph, bins_time=bins_time, bins_charge=bins_charge,
+                b_pede_internal=b_pede_internal, pede_ph=pede_ph, pede_charge=pede_charge, b_pede_subtract,
             )
 
         fig, axs = plt.subplots(figsize=figsize, nrows=2, ncols=2)
@@ -1275,6 +1280,10 @@ class cWaveFormsCollection(cCollection):
         bins_charge = None,  # binning for charge distributions, like in hist. functions
         bins_nev = None,  # binning for event nr. distributions, like in hist. functions
         hists_collection = None,  # a hists_collection can be directly fed in this method*
+        b_pede_internal = True,  # boolean: if True (False), use same-event off-time (externally computed) pedestal values
+        pede_ph = 0,  # pedestal value to manually shift the signal PH spectra (only used if not b_pede_internal)
+        pede_charge = 0,  # pedestal value to manually shift the signal charge spectra (only used if not b_pede_internal)
+        b_pede_subtract = False,  # boolean: if True, the pedestal population is also subtracted from the signal spectra
         figsize = (14, 9),  # figure size, 2-entry array
         blog = False,  # boolean: if True, toggle z log scale
         figtitle = "",  # string with the figure title
@@ -1307,7 +1316,9 @@ class cWaveFormsCollection(cCollection):
                 channel=channel, boolean=boolean,
                 range_time_sig=range_time_sig, range_time_bkg=range_time_bkg, time_var=time_var, 
                 range_ph=range_ph, range_time=range_time, range_charge=range_charge,  
-                bins_ph=bins_ph, bins_time=bins_time, bins_charge=bins_charge, bins_nev=bins_nev
+                bins_ph=bins_ph, bins_time=bins_time, bins_charge=bins_charge, bins_nev=bins_nev,
+                b_pede_internal=b_pede_internal, pede_ph=pede_ph, pede_charge=pede_charge, b_pede_subtract,
+
             )
 
         fig, axs = plt.subplots(figsize=figsize, nrows=2, ncols=2)
