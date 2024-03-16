@@ -815,6 +815,9 @@ class cWaveFormsCollection(cCollection):
         boolean,  # boolean to be applied to the dataset
         range_time_sig,  # time interval in which to get signal, 2-entry array
         range_time_bkg,  # time interval in which to get pedestal, 2-entry array
+        b_pede_internal = True,  # boolean: if True (False), use same-event off-time (externally computed) pedestal
+        pede_ph = 0,  # pedestal value to be subtracted from the signal PH spectra (only used if not b_pede_internal)
+        pede_charge = 0,  # pedestal value to be subtracted from the signal charge spectra (only used if not b_pede_internal)
         time_var = "peak_time",  # time variable to use, string
         bins_ph = None,  # binning for PH distributions, like in hist. functions
         bins_time = None,  # binning for time distributions, like in hist. functions
@@ -883,11 +886,14 @@ class cWaveFormsCollection(cCollection):
         
         hists_collection["hist_ph_sig"] = hists_collection["hist_ph_sig0"]
         hists_collection["hist_charge_sig"] = hists_collection["hist_charge_sig0"]
-        hists_collection["hist_ph_sig"][1] =\
-            hists_collection["hist_ph_sig0"][1] - hists_collection["hist_ph_bkg"][1]
-        hists_collection["hist_charge_sig"][1] =\
-            hists_collection["hist_charge_sig0"][1] - hists_collection["hist_charge_bkg"][1]
-        
+        if b_pede_internal:
+            pede_ph_temp, pede_charge_temp = self.compute_pede(hists_collection, bontime=False)
+            hists_collection["hist_ph_sig"][0] = hists_collection["hist_ph_sig0"][0] - pede_ph_temp
+            hists_collection["hist_charge_sig"][0] = hists_collection["hist_charge_sig0"][0] - pede_charge_temp
+        else:
+            hists_collection["hist_ph_sig"][0] = hists_collection["hist_ph_sig0"][0] - pede_ph
+            hists_collection["hist_charge_sig"][0] = hists_collection["hist_charge_sig0"][0] - pede_charge 
+                   
         hists_collection["hist2d_nev_%s"%(time_var)] = self.create_histo_2d(
             "index", "%s_out_%s"%(channel, time_var),
             boolean, bins=(bins_nev, bins_time), range=(range_nev, range_time)
@@ -908,6 +914,26 @@ class cWaveFormsCollection(cCollection):
         self.__hists_collection_latest = hists_collection
         return hists_collection
     
+    # compute pedestal from an existing collection of distributions (created with analyse_main_distributions)
+    # note: it should be used on distributions computed with b_pede_internal = False and pede_ph/charge = 0
+    # hists_collection is the collection of distributions to use; if None, use the latest created
+    # bontime is a boolean: if True (False) on-(off-)time pedestal is computed, i.e. from "sig" ("bkg") distributions
+    def compute_pede(self, hists_collection=None, bontime=True):
+        if hists_collection is None:
+            hists_collection = self.__hists_collection_latest
+
+        pedetype = "sig" if bontime else "bkg"
+        
+        pede_ph = \
+            np.sum(hists_collection["hist_ph_%s0"%pedetype][0]*hists_collection["hist_ph_%s0"%pedetype][1]) /\
+            np.sum(hists_collection["hist_ph_%s0"%pedetype][1])
+        
+        pede_charge = \
+            np.sum(hists_collection["hist_charge_%s0"%pedetype][0]*hists_collection["hist_charge_%s0"%pedetype][1]) /\
+            np.sum(hists_collection["hist_charge_%s0"%pedetype][1])
+        
+        return pede_ph, pede_charge
+    
     # draw three 1d histograms previously stored by create_histo_1d (total, bkg, sig)
     # hist1d, hist1d_bkg, hist1d_sig are create_histo_1d output
     # ax is the destination axis in a figure
@@ -917,21 +943,21 @@ class cWaveFormsCollection(cCollection):
             ax.fill_betweenx(hist1d[0], hist1d[1], step="mid", lw=0, alpha=0.2, color="C0")
             ax.fill_betweenx(
                 hist1d_bkg[0], hist1d_bkg[1], step="mid", lw=1, edgecolor="purple", facecolor="#FF000000",
-                label="pedestal (sel . interval)" if blegend else None,
+                label="int. pedestal (selection)" if blegend else None,
             )
             ax.fill_betweenx(
                 hist1d_sig[0], hist1d_sig[1], step="mid", lw=1, edgecolor="C1", facecolor="#FF000000",
-                label="signal (sel . interval)" if blegend else None,
+                label="signal (selection)" if blegend else None,
             )
         else:
             ax.fill_between(hist1d[0], hist1d[1], step="mid", lw=0, alpha=0.2, color="C0")
             ax.plot(
                 hist1d_bkg[0], hist1d_bkg[1], drawstyle="steps-mid", lw=1, color="purple",
-                label="pedestal (sel . interval)" if blegend else None,
+                label="int. pedestal (selection)" if blegend else None,
             )
             ax.plot(
                 hist1d_sig[0], hist1d_sig[1], drawstyle="steps-mid", lw=1, color="C1",
-                label="signal (sel . interval)" if blegend else None,
+                label="signal (selection)" if blegend else None,
             )
                     
     # plot waveforms as individual curves, with boolean --> create figure
@@ -1144,13 +1170,13 @@ class cWaveFormsCollection(cCollection):
 
         ax = axs[0, 0]
         self._draw_hist2d(hists_collection["hist2d_ph_%s"%(time_var)], ax, blog=blogz)
-        ax.axhline(range_time_sig[0], color="C1", lw=1, label="signal (sel . interval)")
+        ax.axhline(range_time_sig[0], color="C1", lw=1, label="signal (selection)")
         ax.axhline(range_time_sig[1], color="C1", lw=1)
-        ax.axhline(range_time_bkg[0], color="purple", lw=1, label="pedestal (sel . interval)")
+        ax.axhline(range_time_bkg[0], color="purple", lw=1, label="ext. pedestal (sel . interval)")
         ax.axhline(range_time_bkg[1], color="purple", lw=1)
         ax.axvline(0, color="k", lw=1, ls=":")
         ax.axhline(0, color="k", lw=1, ls=":")
-        ax.axhline(x0_base_range[0], color="red", lw=1, label="baseline (sel. interval)")
+        ax.axhline(x0_base_range[0], color="red", lw=1, label="baseline (selection)")
         ax.axhline(x0_base_range[1], color="red", lw=1)
         if not (range_ph is None):
             ax.set_xlim((range_ph[0], range_ph[1]))
@@ -1169,7 +1195,7 @@ class cWaveFormsCollection(cCollection):
             ax, b_swap_axes=True, blegend=False,
         )
         ax.axhline(0, color="k", lw=1, ls=":")
-        ax.axhline(x0_base_range[0], color="red", lw=1, label="baseline (sel. interval)")
+        ax.axhline(x0_base_range[0], color="red", lw=1, label="baseline (selection)")
         ax.axhline(x0_base_range[1], color="red", lw=1)
         if not (range_time is None):
             ax.set_ylim((range_time[0], range_time[1]))
