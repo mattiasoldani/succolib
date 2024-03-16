@@ -133,6 +133,7 @@ dmypy.json
 
 # editor-related
 .idea/
+*.bak
 
 # my files
 *devel
