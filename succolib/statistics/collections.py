@@ -815,9 +815,10 @@ class cWaveFormsCollection(cCollection):
         boolean,  # boolean to be applied to the dataset
         range_time_sig,  # time interval in which to get signal, 2-entry array
         range_time_bkg,  # time interval in which to get pedestal, 2-entry array
-        b_pede_internal = True,  # boolean: if True (False), use same-event off-time (externally computed) pedestal
-        pede_ph = 0,  # pedestal value to be subtracted from the signal PH spectra (only used if not b_pede_internal)
-        pede_charge = 0,  # pedestal value to be subtracted from the signal charge spectra (only used if not b_pede_internal)
+        b_pede_internal = True,  # boolean: if True (False), use same-event off-time (externally computed) pedestal values
+        pede_ph = 0,  # pedestal value to manually shift the signal PH spectra (only used if not b_pede_internal)
+        pede_charge = 0,  # pedestal value to manually shift the signal charge spectra (only used if not b_pede_internal)
+        b_pede_subtract = False,  # boolean: if True, the pedestal population is also subtracted from the signal spectra
         time_var = "peak_time",  # time variable to use, string
         bins_ph = None,  # binning for PH distributions, like in hist. functions
         bins_time = None,  # binning for time distributions, like in hist. functions
@@ -893,6 +894,13 @@ class cWaveFormsCollection(cCollection):
         else:
             hists_collection["hist_ph_sig"][0] = hists_collection["hist_ph_sig0"][0] - pede_ph
             hists_collection["hist_charge_sig"][0] = hists_collection["hist_charge_sig0"][0] - pede_charge 
+        if b_pede_subtract:
+            hists_collection["hist_ph_sig"][1] =\
+                hists_collection["hist_ph_sig0"][1] - hists_collection["hist_ph_bkg"][1]
+            hists_collection["hist_charge_sig"][1] =\
+                hists_collection["hist_charge_sig0"][1] - hists_collection["hist_charge_bkg"][1]
+            hists_collection["hist_ph_sig"][1][hists_collection["hist_ph_sig"][1] < 0] = 0
+            hists_collection["hist_charge_sig"][1][hists_collection["hist_charge_sig"][1] < 0] = 0
                    
         hists_collection["hist2d_nev_%s"%(time_var)] = self.create_histo_2d(
             "index", "%s_out_%s"%(channel, time_var),
