@@ -41,7 +41,7 @@ def asciiToDf(
                 fileToStringSplitted = fileToString.splitlines()
                 dataTableTemp = np.loadtxt(fileToStringSplitted)
             dfTemp = pd.DataFrame(dataTableTemp, columns=asciiMap)
-            df = df.append(dfTemp[dfTemp.index % int(1 / descFrac) == 0], ignore_index=True, sort=False)
+            df = pd.concat(df, dfTemp[dfTemp.index % int(1 / descFrac) == 0], ignore_index=True, sort=False)
             df = dfMirror(df, mirrorMap)
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
@@ -88,7 +88,7 @@ def asciiToDfMulti(
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
 
-        df = df.append(dfTemp, ignore_index=True, sort=False)
+        df = pd.concat(df, dfTemp, ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
     return df, dt
@@ -127,7 +127,7 @@ def asciiToAk(
                 fileToStringSplitted = fileToString.splitlines()
                 dataTableTemp = np.loadtxt(fileToStringSplitted)
             dfTemp = ak.Array(dict(zip(asciiMap, np.array(dataTableTemp).T)))
-            df = df.append(dfTemp[0:int(len(dfTemp) * descFrac)])
+            df = pd.concat(df, dfTemp[0:int(len(dfTemp) * descFrac)])
             df = akMirror(df, mirrorMap)
             if len(df)>nEvMax:
                 df = df[:nEvMax]

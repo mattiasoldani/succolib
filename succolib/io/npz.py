@@ -34,7 +34,7 @@ def npzToDf(
             else:
                 dataTableTemp = np.hstack([dataTableTemp0[i::nLinesEv] for i in range(nLinesEv)])
             dfTemp = pd.DataFrame(dataTableTemp, columns=npzMap)
-            df = df.append(dfTemp[dfTemp.index % int(1 / descFrac) == 0], ignore_index=True, sort=False)
+            df = pd.concat(df, dfTemp[dfTemp.index % int(1 / descFrac) == 0], ignore_index=True, sort=False)
             df = dfMirror(df, mirrorMap)
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
@@ -82,7 +82,7 @@ def npzToDfMulti(
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
 
-        df = df.append(dfTemp, ignore_index=True, sort=False)
+        df = pd.concat(df, dfTemp, ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
     return df, dt
