@@ -63,7 +63,7 @@ def rootToDfMulti(
             else:
                 dfTemp[fileIndexName] = dfTemp[fileIndexName].astype(str)
 
-        df = df.append(dfTemp, ignore_index=True, sort=False)
+        df = pd.concat([df, dfTemp], ignore_index=True, sort=False)
     t1 = time.time()  # chronometer stop
     dt = t1 - t0
     return df, dt
